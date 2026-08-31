@@ -1,0 +1,3 @@
+<template>
+    This is add record page...
+</template>

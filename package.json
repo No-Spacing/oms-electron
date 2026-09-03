@@ -49,6 +49,7 @@
     "dependencies": {
         "@primeuix/themes": "^3.0.0",
         "@primevue/forms": "^5.0.1",
+        "@primevue/themes": "^4.5.4",
         "@tailwindcss/vite": "^4.3.3",
         "primeicons": "^8.0.0",
         "primevue": "^4.5.5",

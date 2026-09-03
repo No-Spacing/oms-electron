@@ -10,7 +10,8 @@ import {
     Card, 
     DataTable, 
     Column, 
-    Button, 
+    Button,
+    Select,
     useConfirm, 
     useToast 
 } from "primevue";
@@ -92,10 +93,17 @@ const confirmDelete = () => {
                     <Menubar>
                         <template #start>
                             <div class="flex gap-2">
-                                <Button label="On Process" severity="info"/>
-                                <Button label="Colletion" severity="warn"/>
-                                <Button label="Cancelled" severity="danger"/>
-                                <Button label="Completed" severity="success"/>
+                                <div class="w-80">
+                                    <InputGroup class="w-full">
+                                        <Select placeholder="Select order status" class="w-full" :options="[
+                                            'On Process',
+                                            'Collector',
+                                            'Cancelled',
+                                            'Completed'
+                                        ]" />
+                                        <Button label="Apply" />
+                                    </InputGroup>
+                                </div>
                             </div>
                         </template>
                         <template #end>
@@ -107,7 +115,7 @@ const confirmDelete = () => {
                     </Menubar>
                 
                     <DataTable :value="records">
-                        <Column field="po" header="PO#"></Column>
+                        <Column field="po" header="PO/Order No."></Column>
                         <Column field="name" header="Name"></Column>
                         <Column field="status" header="Status">
                             <template #body="{data}">

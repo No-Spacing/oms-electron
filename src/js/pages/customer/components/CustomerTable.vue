@@ -7,10 +7,10 @@
 
     const customers = ref([
         {
-            'name': 'Testing',
+            'name': 'Web Developer',
             'company': 'Progressive Medical Corporation',
             'mobile_no': '09202137722',
-            'email': 'test@email.com',
+            'email': 'webdev@pmcgroup.com',
         }
     ])
 

@@ -11,3 +11,8 @@
 body {
     font-family: 'Inter', sans-serif;
 }
+
+
+:deep(.p-card) {
+    border: 1px solid var(--surface-300);
+}

@@ -15,9 +15,12 @@
                             <InputText type="text" placeholder="Name" />
                         </FormField>
                         <FormField name="company" initialValue="" class="flex flex-col gap-1">
-                            <Select :options="['Progressive Medical Corporation']" type="text" placeholder="Select a company" />
+                            <Select :options="['Progressive Medical Corporation']" placeholder="Select a company" />
                         </FormField>
-                        <FormField name="Mobile_no" initialValue="" class="flex flex-col gap-1">
+                        <FormField name="address" initialValue="" class="flex flex-col gap-1">
+                            <InputText type="text" placeholder="Address" />
+                        </FormField>
+                        <FormField name="mobile_no" initialValue="" class="flex flex-col gap-1">
                             <InputText type="text" placeholder="Mobile No." />
                         </FormField>
                         <FormField name="email" initialValue="" class="flex flex-col gap-1">

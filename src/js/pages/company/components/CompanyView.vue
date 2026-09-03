@@ -48,7 +48,7 @@
             <template #title>
                 <Toolbar>
                     <template #start>
-                        {{ $route.name }}
+                        List of Customer
                     </template>
                     <template #end>
                         <Button label="Add" icon="pi pi-plus" @click="dialog = true"/>

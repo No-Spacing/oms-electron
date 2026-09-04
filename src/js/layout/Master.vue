@@ -11,7 +11,7 @@
         ConfirmDialog,
         Toast,
     } from 'primevue'
-    import { ref, onMounted } from 'vue'
+    import { ref } from 'vue'
     import AppBreadcrumb from './AppBreadcrumb.vue';
 
     const isDark = ref(false);

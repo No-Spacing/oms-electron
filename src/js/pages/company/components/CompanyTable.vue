@@ -1,5 +1,5 @@
 <script setup>
-    import { DataTable, Column, Button, useConfirm, useToast, Card, Toolbar, Breadcrumb } from 'primevue'
+    import { DataTable, Column, Button, useConfirm, useToast, Card, Toolbar, Breadcrumb, ConfirmDialog } from 'primevue'
     import CreateUpdateCompanyDialog from './CreateUpdateCompanyDialog.vue';
     import { ref } from 'vue'
 
@@ -73,4 +73,5 @@
         </Card>
         <CreateUpdateCompanyDialog v-model:dialog="dialog"></CreateUpdateCompanyDialog>
    </div>
+   <ConfirmDialog></ConfirmDialog>
 </template>

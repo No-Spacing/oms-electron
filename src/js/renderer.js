@@ -11,6 +11,7 @@ import { definePreset } from '@primevue/themes'
 
 import ConfirmationService from 'primevue/confirmationservice';
 import ToastService from 'primevue/toastservice';
+import Tooltip from 'primevue/tooltip';
 
 import Ripple from 'primevue/ripple';
 
@@ -29,5 +30,6 @@ createApp(App)
         }
     }
 })
+.directive('tooltip', Tooltip)
 .directive('ripple', Ripple)
 .mount('#app')

@@ -13,7 +13,8 @@ import {
     Button,
     Select,
     useConfirm, 
-    useToast 
+    useToast,
+    ConfirmDialog
 } from "primevue";
 
 const confirm = useConfirm();
@@ -22,21 +23,20 @@ const toast = useToast();
 const items = ref([
     {
         label: 'On Process',
-        icon: 'pi pi-home'
+        icon: 'pi pi-shopping-cart'
     },
     {
-        label: 'Collector',
-        icon: 'pi pi-home'
+        label: 'Delivery',
+        icon: 'pi pi-truck'
     },
     {
         label: 'Cancelled',
-        icon: 'pi pi-home'
+        icon: 'pi pi-times-circle'
     },
     {
         label: 'Completed',
-        icon: 'pi pi-home'
+        icon: 'pi pi-check-circle'
     },
-    
 ]);
 
 const records = ref([
@@ -95,12 +95,24 @@ const confirmDelete = () => {
                             <div class="flex gap-2">
                                 <div class="w-80">
                                     <InputGroup class="w-full">
-                                        <Select placeholder="Select order status" class="w-full" :options="[
-                                            'On Process',
-                                            'Collector',
-                                            'Cancelled',
-                                            'Completed'
-                                        ]" />
+                                        <Select placeholder="Select order status" class="w-full" :options="items">
+                                            <!-- Template for options inside the dropdown list -->
+                                            <template #option="slotProps">
+                                                <div class="flex items-center gap-2">
+                                                    <i :class="slotProps.option.icon" />
+                                                    <span>{{ slotProps.option.label }}</span>
+                                                </div>
+                                            </template>
+
+                                            <!-- Template for the currently selected value -->
+                                            <template #value="slotProps">
+                                                <div v-if="slotProps.value" class="flex items-center gap-2">
+                                                    <i :class="slotProps.value.icon" />
+                                                    <span>{{ slotProps.value.label }}</span>
+                                                </div>
+                                                <span v-else>{{ slotProps.placeholder }}</span>
+                                            </template>
+                                        </Select>
                                         <Button label="Apply" />
                                     </InputGroup>
                                 </div>
@@ -139,4 +151,5 @@ const confirmDelete = () => {
             </template>
         </Card>
     </div>
+    <ConfirmDialog></ConfirmDialog>
 </template>

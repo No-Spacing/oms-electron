@@ -8,7 +8,6 @@
         Card, 
         ToggleButton,
         Divider,
-        ConfirmDialog,
         Toast,
     } from 'primevue'
     import { ref } from 'vue'
@@ -105,7 +104,6 @@
                 </div>
             </div>
         </main>
-        <ConfirmDialog></ConfirmDialog>
         <Toast></Toast>
     </div>
 </template>

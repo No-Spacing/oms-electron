@@ -1,5 +1,5 @@
 <script setup>
-    import { DataTable, Column, Button, useConfirm, useToast, Card, Toolbar } from 'primevue'
+    import { DataTable, Column, Button, useConfirm, useToast, Card, Toolbar, ConfirmDialog } from 'primevue'
     import { ref } from 'vue'
 
     const confirm = useConfirm();
@@ -73,4 +73,5 @@
             </template>
         </Card>
     </div>
+    <ConfirmDialog></ConfirmDialog>
 </template>

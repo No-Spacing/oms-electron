@@ -7,6 +7,10 @@ export default defineConfig({
     base: './', // <--- Critical for Electron file loading in production
     root: resolve(import.meta.dirname, 'src'),
     plugins:[ vue(), tailwindcss() ],
+    define: {
+        // FORCE Vue DevTools to enable itself
+        '__VUE_PROD_DEVTOOLS__': true 
+    },
     build: {
         outDir: resolve(import.meta.dirname, 'dist'),
         emptyOutDir: true,

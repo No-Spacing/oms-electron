@@ -1,21 +1,38 @@
 <script setup>
-    import { DataTable, Column, Button, useConfirm, useToast, Card, Toolbar, Breadcrumb, ConfirmDialog } from 'primevue'
+    import { DataTable, Column, Button, useConfirm, useToast, Card, Toolbar, Paginator, ConfirmDialog } from 'primevue'
     import CreateUpdateCompanyDialog from './CreateUpdateCompanyDialog.vue';
-    import { ref } from 'vue'
+    import { ref, onMounted } from 'vue'
+    import axios from 'axios'
 
     const dialog = ref(false);
 
     const confirm = useConfirm();
     const toast = useToast();
+    const companies = ref([]);
 
-    const customers = ref([
-        {
-            'name': 'Progressive Medical Corporation',
-            'address': 'C. Reymundo, Pasig City, Metro Manila'
-        }
-    ])
+    const editData = ref([]);
 
-    const confirmDelete = () => {
+    const fetchCompanies = () => {
+        axios.get("http://127.0.0.1:8000/api/companies")
+        .then((response) => {
+            companies.value = response.data
+        })
+        .catch((error) => {
+            console.error(error)
+        })
+    };
+
+    const addButton = () => {
+        dialog.value = true;
+        editData.value = null;
+    }
+
+    const editButton = (data) => {
+        dialog.value = true
+        editData.value = data;
+    }
+
+    const confirmDelete = (data) => {
         confirm.require({
             message: 'Do you want to delete this record?',
             header: 'Danger Zone',
@@ -38,6 +55,10 @@
             }
         });
     };
+
+    onMounted(() => {
+        fetchCompanies();
+    });
 </script>
 <template>
    <div>
@@ -48,30 +69,30 @@
                         Company
                     </template>
                     <template #end>
-                        <Button icon="pi pi-plus" label="Add" @click="dialog = true"/>
+                        <Button icon="pi pi-plus" label="Add" @click="addButton()"/>
                     </template>
                 </Toolbar>
             </template>
             <template #content>
-                <DataTable :value="customers">
+                <DataTable :value="companies.data">
                     <Column field="name" header="Name"></Column>
                     <Column field="address" header="Address"></Column>
                     <Column field="" header="Actions">
                         <template #body="data">
                             <div class="flex gap-2">
                                 <RouterLink :to="{ name: 'view-company' }">
-                                    <Button severity="success" icon="pi pi-eye" label="View" />
+                                    <Button severity="success" icon="pi pi-eye" label="View"/>
                                 </RouterLink>
-                                
-                                <Button severity="info" icon="pi pi-pencil" label="Edit" @click="dialog = true"/>
-                                <Button severity="danger" icon="pi pi-trash" label="Delete" @click="confirmDelete()" />
+                                <Button severity="info" icon="pi pi-pencil" label="Edit" @click="editButton(data.data)"/>
+                                <Button severity="danger" icon="pi pi-trash" label="Delete" @click="confirmDelete(data.data)" />
                             </div>
                         </template>
                     </Column>
                 </DataTable>
+                <Paginator :rows="10" :totalRecords="120" :rowsPerPageOptions="[10, 20, 30]"></Paginator>
             </template>
         </Card>
-        <CreateUpdateCompanyDialog v-model:dialog="dialog"></CreateUpdateCompanyDialog>
+        <CreateUpdateCompanyDialog v-if="dialog" v-model:dialog="dialog" :companyData="editData"></CreateUpdateCompanyDialog>
    </div>
    <ConfirmDialog></ConfirmDialog>
 </template>

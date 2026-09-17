@@ -7,6 +7,7 @@ import App from './App.vue'
 
 import PrimeVue from 'primevue/config';
 import Lara from '@primeuix/themes/lara';
+import Aura from '@primeuix/themes/aura';
 import { definePreset } from '@primevue/themes'
 
 import ConfirmationService from 'primevue/confirmationservice';
@@ -15,7 +16,7 @@ import Tooltip from 'primevue/tooltip';
 
 import Ripple from 'primevue/ripple';
 
-const MyPreset = definePreset(Lara, {})
+const MyPreset = definePreset(Aura, {})
 
 createApp(App)
 .use(router)

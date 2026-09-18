@@ -13,6 +13,11 @@
     import { ref } from 'vue'
     import AppBreadcrumb from './AppBreadcrumb.vue';
 
+    const token = localStorage.getItem('authToken');
+
+    const storedUserJson = localStorage.getItem('user');
+    const user = JSON.parse(storedUserJson);
+
     const isDark = ref(false);
     
     const toggleDarkMode = () => {
@@ -39,6 +44,11 @@
             label: 'Records',
             icon: 'pi pi-truck',
             link: '/records'
+        },
+        {
+            label: 'Users',
+            icon: 'pi pi-user',
+            link: '/users',
         },
         {
             label: 'About',
@@ -84,10 +94,10 @@
                             <template #end>
                                 <div class="mt-auto">
                                     <Divider class="my-2"></Divider>
-                                    <div class="flex flex-row items-center pl-5 pb-3">
+                                    <div class="flex flex-row items-center pl-5 pb-3 gap-1">
                                         <Avatar size="large" image="https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png" class="mr-2 mt-1" shape="circle" />
                                         <span class="inline-flex flex-col items-start">
-                                            <span class="font-bold">Web Developer</span>
+                                            <span class="font-bold">{{ user.name }}</span>
                                             <span class="text-sm">Encoder</span>
                                         </span>
                                     </div>

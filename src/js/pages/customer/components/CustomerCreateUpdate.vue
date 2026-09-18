@@ -3,8 +3,8 @@
     import { Form, FormField } from '@primevue/forms';
 </script>
 <template>
-    <div>
-        <Card>
+    <div class="flex justify-center">
+        <Card class="w-280">
             <template #title>
                 Customer's Information
             </template>

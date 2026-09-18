@@ -83,7 +83,7 @@
                                     <Button label="Cancel" severity="danger" />
                                 </div>
                             </div>
-                            <div class="border p-2 flex items-center justify-between">
+                            <div class="border p-2 flex items-center justify-between -mt-px">
                                 <div class="flex items-center">
                                     <i class="pi pi-shopping-cart pr-2" style="font-size: 1.5rem"></i>
                                     <span class="font-bold text-md gap-5">

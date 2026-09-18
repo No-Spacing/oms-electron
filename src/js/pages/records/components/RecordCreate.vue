@@ -12,7 +12,7 @@
                 Input your record information.
             </template>
             <template #content>
-                <div class="card max-w mx-auto p-6 bg-surface-0 dark:bg-surface-900 rounded-xl shadow-sm border border-surface-200 dark:border-surface-700 my-5">
+                <div class="card max-w mx-auto p-6 bg-surface-0 dark:bg-surface-900 rounded-xl shadow-sm border border-surface-200 dark:border-surface-700 my-5 w-280">
                     <Form class="flex flex-col gap-6 w-full">
                         <!-- Customer Section -->
                         <div class="flex flex-col gap-4">

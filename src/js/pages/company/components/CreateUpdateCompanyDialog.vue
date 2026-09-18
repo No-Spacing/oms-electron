@@ -1,10 +1,12 @@
 <script setup>
-    import { Dialog, Button, InputText, Message } from 'primevue';
+    import { Dialog, Button, InputText, Message, useToast } from 'primevue';
     import { Form } from '@primevue/forms';
     import { computed, reactive } from 'vue';
-    import axios from 'axios';
+    import CompanyService from '../CompanyService';
 
-    console.log('HEllo');
+    const companyService = new CompanyService();
+
+    const toast = useToast();
 
     const props = defineProps({
         dialog: Boolean,
@@ -16,7 +18,7 @@
         address: props?.companyData?.address,
     });
 
-    const emit = defineEmits(['update:dialog'])
+    const emit = defineEmits(['update:dialog', 'saved'])
 
     const isVisible = computed({
         get() {
@@ -36,18 +38,16 @@
         }
 
         return {
-            values, // (Optional) Used to pass current form values to submit event.
             errors
         };
     };
 
     const onFormSubmit = ({ valid, values }) => {
         if(valid) {
-            axios.post('http://127.0.0.1:8000/api/save-company',values)
-            .then((response) => {
-                console.log(response.data)
-            }).catch((error) => {
-                console.log(error);
+            companyService.save(values).then(() => {
+                toast.add({ severity: 'success', summary: 'Confirmed', detail: 'Company has been added!', life: 3000 });
+                emit('saved');
+                emit('update:dialog', false);
             })
         }
     }

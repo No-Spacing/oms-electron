@@ -1,5 +1,7 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, reactive } from 'vue';
+import { useRouter } from 'vue-router';
+import axios from 'axios';
 import Card from 'primevue/card';
 import InputText from 'primevue/inputtext';
 import Password from 'primevue/password';
@@ -7,15 +9,19 @@ import Button from 'primevue/button';
 import Checkbox from 'primevue/checkbox';
 import FloatLabel from 'primevue/floatlabel';
 
-// Form state
-const email = ref('');
-const password = ref('');
-const rememberMe = ref(false);
+import apiClient from '../../services/axios';
 
-const handleLogin = () => {
-    // Implement your authentication logic here
-    console.log('Logging in with:', email.value, password.value);
-};
+const router = useRouter();
+
+const loading = ref(false);
+const errors = ref([]);
+
+// Form state
+const form = reactive({
+    email: null,
+    password: null,
+})
+const rememberMe = ref(false);
 
 const sunrise = ref('../../../assets/sunrise.jpg');
 const sunset = ref('../../../assets/sunset.jpg');
@@ -28,6 +34,25 @@ const isPmTime = currentHour >= 12;
 const backgroundImage = computed(() => {
     return isPmTime ? sunset.value : sunrise.value;
 });
+
+async function handleLogin () {
+    loading.value = true;
+    try {
+        const response = await apiClient.post('login', form);
+
+        // Save auth state
+        localStorage.setItem('authToken', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+
+        // Redirect
+        router.push({ name: 'Home' });
+    } catch (error) {
+        errors.value = error?.response?.data;
+        console.log(error);
+    } finally {
+        loading.value = false; // Runs whether it succeeds or fails
+    }
+}
 
 onMounted(() => {
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
@@ -57,12 +82,12 @@ onMounted(() => {
                 </template>
                 
                 <template #content>
-                    <form @submit.prevent="handleLogin" class="space-y-6 pt-2">
+                    <form @submit.prevent="handleLogin()" class="space-y-6 pt-2">
                         <div class="field">
                             <FloatLabel variant="on">
                                 <InputText 
                                     id="email" 
-                                    v-model="email" 
+                                    v-model="form.email" 
                                     type="email" 
                                     class="w-full" 
                                     autocomplete="email"
@@ -76,7 +101,7 @@ onMounted(() => {
                             <FloatLabel variant="on">
                                 <Password 
                                     id="password" 
-                                    v-model="password" 
+                                    v-model="form.password" 
                                     class="w-full" 
                                     inputClass="w-full" 
                                     :feedback="false" 
@@ -107,6 +132,7 @@ onMounted(() => {
                             icon="pi pi-sign-in" 
                             class="w-full" 
                             :severity="isPmTime ? 'warn' : 'success'"
+                            :loading="loading"
                         />
                     </form>
                 </template>

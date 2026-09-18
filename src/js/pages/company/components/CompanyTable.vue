@@ -2,7 +2,9 @@
     import { DataTable, Column, Button, useConfirm, useToast, Card, Toolbar, Paginator, ConfirmDialog } from 'primevue'
     import CreateUpdateCompanyDialog from './CreateUpdateCompanyDialog.vue';
     import { ref, onMounted } from 'vue'
-    import axios from 'axios'
+    import CompanyService from '../CompanyService.js';
+    
+    const companyService = new CompanyService();
 
     const dialog = ref(false);
 
@@ -10,26 +12,20 @@
     const toast = useToast();
     const companies = ref([]);
 
-    const editData = ref([]);
+    const editCompany = ref([]);
 
-    const fetchCompanies = () => {
-        axios.get("http://127.0.0.1:8000/api/companies")
-        .then((response) => {
-            companies.value = response.data
-        })
-        .catch((error) => {
-            console.error(error)
-        })
+    const fetchCompanies = async () => {
+        companies.value = await companyService.getCompanies();
     };
 
     const addButton = () => {
         dialog.value = true;
-        editData.value = null;
+        editCompany.value = null;
     }
 
     const editButton = (data) => {
         dialog.value = true
-        editData.value = data;
+        editCompany.value = data;
     }
 
     const confirmDelete = (data) => {
@@ -92,7 +88,7 @@
                 <Paginator :rows="10" :totalRecords="120" :rowsPerPageOptions="[10, 20, 30]"></Paginator>
             </template>
         </Card>
-        <CreateUpdateCompanyDialog v-if="dialog" v-model:dialog="dialog" :companyData="editData"></CreateUpdateCompanyDialog>
+        <CreateUpdateCompanyDialog v-if="dialog" v-model:dialog="dialog" :companyData="editCompany" @saved="fetchCompanies"></CreateUpdateCompanyDialog>
    </div>
    <ConfirmDialog></ConfirmDialog>
 </template>

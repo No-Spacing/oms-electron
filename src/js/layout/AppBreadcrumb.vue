@@ -1,14 +1,18 @@
 <script setup>
     import { computed, ref, onMounted } from 'vue'
-    import { useRoute } from 'vue-router'
+    import { useRoute, useRouter } from 'vue-router'
     import { Breadcrumb, Card, ToggleButton, Button,Toolbar } from 'primevue'
+    import axios from 'axios'
+
+    const token = localStorage.getItem('authToken');
 
     const route = useRoute()
+    const router = useRouter();
 
     // Root home icon configuration
     const home = ref({
         icon: 'pi pi-home',
-        route: '/'
+        route: '/home'
     })
 
     // Dynamically generate breadcrumbs based on matched route hierarchy
@@ -27,6 +31,22 @@
     
     const toggleDarkMode = () => {
         document.documentElement.classList.toggle('my-app-dark');
+    };
+
+    const handleLogout = async () => {
+        const response = await axios.post('http://127.0.0.1:8000/api/logout', 
+            {}, // <-- 2nd argument: Request body data (empty here)
+            {   // <-- 3rd argument: Config object (headers go here!)
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        );
+
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('user');
+
+        router.push({ name: 'Login' });
     };
 
     onMounted(() => {
@@ -58,7 +78,8 @@
         <template #end>
             <div class="flex gap-2">
                 <Button icon="pi pi-spin pi-spinner-dotted" severity="secondary"  rounded aria-label="Refresh" size="large" />
-                <ToggleButton v-model="isDark" onLabel="Light" offLabel="Dark" @click="toggleDarkMode" onIcon="pi pi-sun" offIcon="pi pi-moon" class="!bg-transparent border-none shadow-none w-36" />
+                <ToggleButton v-model="isDark" onLabel="Light" offLabel="Dark" @click="toggleDarkMode" onIcon="pi pi-sun" offIcon="pi pi-moon" class="w-36" />
+                <Button icon="pi pi-sign-out" severity="secondary"  rounded aria-label="Refresh" size="large" @click="handleLogout()"/>
             </div>
         </template>
     </Toolbar>

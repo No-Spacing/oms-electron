@@ -1,10 +1,14 @@
 <script setup>
     import { Dialog, Button, InputText, Message, useToast } from 'primevue';
     import { Form } from '@primevue/forms';
-    import { computed, reactive } from 'vue';
+    import { computed, reactive, ref } from 'vue';
     import CompanyService from '../CompanyService';
 
     const companyService = new CompanyService();
+
+    const error = ref([]);
+
+    const emit = defineEmits(['update:dialog', 'saved'])
 
     const toast = useToast();
 
@@ -14,11 +18,10 @@
     })
     
     const initialValues = reactive({
+        id: props.companyData?.id ? props.companyData?.id : null,
         name: props?.companyData?.name,
         address: props?.companyData?.address,
     });
-
-    const emit = defineEmits(['update:dialog', 'saved'])
 
     const isVisible = computed({
         get() {
@@ -44,10 +47,12 @@
 
     const onFormSubmit = ({ valid, values }) => {
         if(valid) {
-            companyService.save(values).then(() => {
+            companyService.saveCompany(values).then(() => {
                 toast.add({ severity: 'success', summary: 'Confirmed', detail: 'Company has been added!', life: 3000 });
                 emit('saved');
                 emit('update:dialog', false);
+            }).catch((errors) => {
+                error.value = errors.response.data
             })
         }
     }
@@ -58,11 +63,12 @@
         <Dialog v-model:visible="isVisible" modal header="Company" :style="{ width: '35rem' }">
             <span class="text-surface-500 dark:text-surface-400 block mb-6">Company's Information</span>
             <Form v-slot="$form" :initialValues :resolver @submit="onFormSubmit">
+                <InputText id="id" name="id" class="flex-auto" autocomplete="off" hidden/>
                 <div class="flex flex-col gap-2 mb-4">
                     <label for="name" class="font-semibold w-24">Name</label>
                     <div class="flex flex-col gap-1">
                         <InputText id="name" name="name" class="flex-auto" autocomplete="off" />
-                        <Message v-if="$form.name?.invalid" severity="error" size="small" variant="simple">{{ $form.name.error?.message }}</Message>
+                        <Message v-if="$form.name?.invalid || error.errors?.name" severity="error" size="small" variant="simple">{{ $form.name.error?.message || error.errors?.name[0] }}</Message>
                     </div>
                 </div>
                 <div class="flex flex-col gap-2 mb-8">

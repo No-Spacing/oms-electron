@@ -2,16 +2,13 @@
 import { ref, onMounted, computed, reactive } from 'vue';
 import { useRouter } from 'vue-router';
 import axios from 'axios';
-import Card from 'primevue/card';
-import InputText from 'primevue/inputtext';
-import Password from 'primevue/password';
-import Button from 'primevue/button';
-import Checkbox from 'primevue/checkbox';
-import FloatLabel from 'primevue/floatlabel';
+import { Card, InputText, Password, Button, Checkbox, FloatLabel, useToast, Toast, ConfirmDialog, useConfirm }from 'primevue';
 
 import apiClient from '../../services/axios';
 
 const router = useRouter();
+const toast = useToast();
+const confirm = useConfirm();
 
 const loading = ref(false);
 const errors = ref([]);
@@ -23,20 +20,12 @@ const form = reactive({
 })
 const rememberMe = ref(false);
 
-const sunrise = ref('../../../assets/sunrise.jpg');
-const sunset = ref('../../../assets/sunset.jpg');
-
-// Automatically check if current local hour is PM (12 PM or later)
-const currentHour = new Date().getHours();
-const isPmTime = currentHour >= 12;
-
 // Computed background image based on AM/PM
-const backgroundImage = computed(() => {
-    return isPmTime ? sunset.value : sunrise.value;
-});
+const backgroundImage = ref('../../../assets/welcome.jpg');
 
 async function handleLogin () {
     loading.value = true;
+
     try {
         const response = await apiClient.post('login', form);
 
@@ -47,8 +36,24 @@ async function handleLogin () {
         // Redirect
         router.push({ name: 'Home' });
     } catch (error) {
-        errors.value = error?.response?.data;
-        console.log(error);
+        if(error?.response?.status === 422) {
+             toast.add({ 
+                severity: 'error', 
+                summary: 'Error', 
+                detail: "We couldn't find an account matching those details. Please verify your info and try again.", 
+                life: 10000 
+            });
+        }
+        
+        if(error?.response?.status == 500){
+            toast.add({ 
+                severity: 'error', 
+                summary: 'Error', 
+                detail: "API connection failed. Please verify your network status or try again later. If the problem persists, please contact the developers.", 
+                life: 10000 
+            });
+        }
+        
     } finally {
         loading.value = false; // Runs whether it succeeds or fails
     }
@@ -131,7 +136,7 @@ onMounted(() => {
                             label="Login" 
                             icon="pi pi-sign-in" 
                             class="w-full" 
-                            :severity="isPmTime ? 'warn' : 'success'"
+                            severity="success"
                             :loading="loading"
                         />
                     </form>
@@ -139,4 +144,6 @@ onMounted(() => {
             </Card>
         </div>
     </div>
+    <Toast position="top-center"></Toast>
+    <ConfirmDialog></ConfirmDialog>
 </template>

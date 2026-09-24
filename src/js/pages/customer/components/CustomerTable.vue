@@ -1,21 +1,24 @@
 <script setup>
     import { DataTable, Column, Button, useConfirm, useToast, Card, Toolbar, ConfirmDialog } from 'primevue'
     import { ref, onMounted } from 'vue'
-    import axios from 'axios';
+    import CustomerService from '../CustomerService';
+    import { usePagination } from '../../../composable/usePagination.js';
 
+    const customerService = new CustomerService();
+
+    const { 
+        data: customers, 
+        first, 
+        rows, 
+        loading, 
+        onPageChange, 
+        init 
+    } = usePagination((params) => customerService.getCustomers(params));
+     
     const confirm = useConfirm();
     const toast = useToast();
 
-    const customers = ref([
-        {
-            'name': 'Web Developer',
-            'company': 'Progressive Medical Corporation',
-            'mobile_no': '09202137722',
-            'email': 'webdev@pmcgroup.com',
-        }
-    ])
-
-    const confirmDelete = () => {
+    const confirmDelete = (data) => {
         confirm.require({
             message: 'Do you want to delete this record?',
             header: 'Danger Zone',
@@ -38,6 +41,10 @@
             }
         });
     };
+
+    onMounted(() => {
+        init();
+    })
 </script>
 <template>
     <div>
@@ -55,18 +62,18 @@
                 </Toolbar>
             </template>
             <template #content>
-                <DataTable :value="customers">
+                <DataTable :value="customers.data">
                     <Column field="name" header="Name"></Column>
-                    <Column field="company" header="Company"></Column>
+                    <Column field="company.name" header="Company"></Column>
                     <Column field="mobile_no" header="Mobile No."></Column>
                     <Column field="email" header="Email Address"></Column>
                     <Column field="" header="Actions">
                         <template #body="data">
                             <div class="flex gap-2">
-                                <RouterLink :to="{ name:'customer-create-update' }">
+                                <RouterLink :to="{ name:'customer-create-update', params: { id: data.data.id } }">
                                     <Button severity="info" icon="pi pi-pencil" label="Edit" />
                                 </RouterLink>
-                                <Button severity="danger" icon="pi pi-trash" label="Delete" @click="confirmDelete()" />
+                                <Button severity="danger" icon="pi pi-trash" label="Delete" @click="confirmDelete(data)" />
                             </div>
                         </template>
                     </Column>

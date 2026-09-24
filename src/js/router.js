@@ -63,7 +63,7 @@ const routes = [
                         component: CompanyTable, 
                     },
                     { 
-                        path: 'view-company', 
+                        path: 'view-company/:id?', 
                         name: 'view-company', 
                         component: CompanyView, 
                         meta: { breadcrumb: 'Customer' } 
@@ -81,7 +81,7 @@ const routes = [
                         component: CustomerTable
                     },
                     {
-                        path: 'customer-create-update',
+                        path: 'customer-create-update/:id?',
                         name: 'customer-create-update',
                         component: CustomerCreateUpdate,
                         meta: { breadcrumb: 'Customer Info' }

@@ -10,19 +10,11 @@
         Divider,
         Toast,
     } from 'primevue'
-    import { ref } from 'vue'
+    import { ref, computed } from 'vue'
     import AppBreadcrumb from './AppBreadcrumb.vue';
-
-    const token = localStorage.getItem('authToken');
 
     const storedUserJson = localStorage.getItem('user');
     const user = JSON.parse(storedUserJson);
-
-    const isDark = ref(false);
-    
-    const toggleDarkMode = () => {
-        document.documentElement.classList.toggle('my-app-dark');
-    };
 
     const items = ref([
         {
@@ -49,6 +41,7 @@
             label: 'Users',
             icon: 'pi pi-user',
             link: '/users',
+            requiresAdmin: true
         },
         {
             label: 'About',
@@ -56,6 +49,15 @@
             link: '/about'
         },
     ]);
+
+    const filteredItems = computed(() => {
+    return items.value.filter(item => {
+        if (item.requiresAdmin && user.role.name != 'Admin') {
+            return false;
+        }
+        return true;
+    });
+});
 </script>
 <template>
    <div class="p-2">
@@ -64,7 +66,7 @@
                 <div class="min-h-screen flex bg-surface-50 dark:bg-surface-950">
                     <!-- SIDEBAR (Independent & Fixed) -->
                     <aside class="w-60 flex-shrink-0 hidden md:block">
-                        <Menu :model="items" class="w-full flex flex-col overflow-hidden">
+                        <Menu :model="filteredItems" class="w-full flex flex-col overflow-hidden">
                             <template #start>
                                 <div class="flex items-center justify-center gap-2 px-4 py-6">
                                     <img src="../../assets/ico.png" alt="Company Logo" class="size-6 object-contain" />
@@ -98,7 +100,7 @@
                                         <Avatar size="large" image="https://primefaces.org/cdn/primevue/images/avatar/amyelsner.png" class="mr-2 mt-1" shape="circle" />
                                         <span class="inline-flex flex-col items-start">
                                             <span class="font-bold">{{ user.name }}</span>
-                                            <span class="text-sm">Encoder</span>
+                                            <span class="text-sm">{{ user.role.name }}</span>
                                         </span>
                                     </div>
                                 </div>

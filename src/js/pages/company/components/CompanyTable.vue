@@ -1,8 +1,18 @@
 <script setup>
-    import { DataTable, Column, Button, useConfirm, useToast, Card, Toolbar, Paginator, ConfirmDialog } from 'primevue'
-    import CreateUpdateCompanyDialog from './CreateUpdateCompanyDialog.vue';
+    import { DataTable, Column, Button, useConfirm, useToast, Card, Toolbar, ConfirmDialog, Paginator } from 'primevue'
+    import CompanyCreateUpdateDialog from './CompanyCreateUpdateDialog.vue';
     import { ref, onMounted } from 'vue'
     import CompanyService from '../CompanyService.js';
+    import { usePagination } from '../../../composable/usePagination.js';
+
+    const { 
+        data: companies, 
+        first, 
+        rows, 
+        loading, 
+        onPageChange, 
+        init 
+    } = usePagination((params) => companyService.getCompanies(params));
     
     const companyService = new CompanyService();
 
@@ -10,13 +20,8 @@
 
     const confirm = useConfirm();
     const toast = useToast();
-    const companies = ref([]);
 
     const editCompany = ref([]);
-
-    const fetchCompanies = async () => {
-        companies.value = await companyService.getCompanies();
-    };
 
     const addButton = () => {
         dialog.value = true;
@@ -44,6 +49,8 @@
                 severity: 'danger'
             },
             accept: () => {
+                companyService.deleteCompany(data)
+                init()
                 toast.add({ severity: 'info', summary: 'Confirmed', detail: 'Record deleted', life: 3000 });
             },
             reject: () => {
@@ -53,7 +60,7 @@
     };
 
     onMounted(() => {
-        fetchCompanies();
+        init();
     });
 </script>
 <template>
@@ -76,7 +83,7 @@
                     <Column field="" header="Actions">
                         <template #body="data">
                             <div class="flex gap-2">
-                                <RouterLink :to="{ name: 'view-company' }">
+                                <RouterLink :to="{ name: 'view-company', params: { id: data.data.id } }">
                                     <Button severity="success" icon="pi pi-eye" label="View"/>
                                 </RouterLink>
                                 <Button severity="info" icon="pi pi-pencil" label="Edit" @click="editButton(data.data)"/>
@@ -85,10 +92,16 @@
                         </template>
                     </Column>
                 </DataTable>
-                <Paginator :rows="10" :totalRecords="120" :rowsPerPageOptions="[10, 20, 30]"></Paginator>
+                <Paginator
+                    v-model:first="first"
+                    v-model:rows="rows"
+                    :totalRecords="companies.meta?.total || 0" 
+                    @page="onPageChange" 
+                    :rowsPerPageOptions="[10, 30, 50]"
+                />
             </template>
         </Card>
-        <CreateUpdateCompanyDialog v-if="dialog" v-model:dialog="dialog" :companyData="editCompany" @saved="fetchCompanies"></CreateUpdateCompanyDialog>
+        <CompanyCreateUpdateDialog v-if="dialog" v-model:dialog="dialog" :companyData="editCompany" @saved="init"></CompanyCreateUpdateDialog>
    </div>
    <ConfirmDialog></ConfirmDialog>
 </template>

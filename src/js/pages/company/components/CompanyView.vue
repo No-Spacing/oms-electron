@@ -1,22 +1,20 @@
 <script setup>
     import { InputText, InputGroup, DataTable, Column, Button, useConfirm, useToast, Card, Toolbar, ConfirmDialog } from 'primevue'
-    import { ref } from 'vue'
-    
-    import CreateUpdateCustomerDialog from './CreateUpdateCustomerDialog.vue';
+    import { ref, onMounted } from 'vue'
+    import { useRoute } from 'vue-router'
+    import CompanyService from '../CompanyService.js';
+ 
+    import CustomerCreateUpdateDialog from './CustomerCreateUpdateDialog.vue';
 
+    const companyService = new CompanyService();
+    const route = useRoute();
     const confirm = useConfirm();
     const toast = useToast();
 
     const dialog = ref(false);
+    const customerData = ref([]);
 
-    const customers = ref([
-        {
-            'name': 'Testing',
-            'company': 'Progressive Medical Corporation',
-            'mobile_no': '09202137722',
-            'email': 'test@email.com',
-        }
-    ])
+    const company = ref([]);
 
     const confirmDelete = () => {
         confirm.require({
@@ -41,6 +39,25 @@
             }
         });
     };
+
+    const fetchCompany = async () => {
+        const response = await companyService.getCompany(route.params.id);
+        company.value = response.data;
+    }
+
+    const addDialog = () => {
+        customerData.value = null;
+        dialog.value = true;
+    }
+
+    const editDialog = (data) => {
+        customerData.value = data.data
+        dialog.value = true;
+    }
+
+    onMounted (() => {
+        fetchCompany();
+    })
 </script>
 <template>
     <div>
@@ -51,19 +68,20 @@
                         List of Customer
                     </template>
                     <template #end>
-                        <Button label="Add" icon="pi pi-plus" @click="dialog = true"/>
+                        <Button label="Add" icon="pi pi-plus" @click="addDialog"/>
                     </template>
                 </Toolbar>
             </template>
             <template #content>
-                <DataTable :value="customers">
+                <DataTable :value="company.customers">
                     <Column field="name" header="Name"></Column>
+                    <Column field="address" header="Address"></Column>
                     <Column field="mobile_no" header="Mobile No."></Column>
                     <Column field="email" header="Email Address"></Column>
                     <Column field="" header="Actions">
                         <template #body="data">
                             <div class="flex gap-2">
-                                <Button severity="info" icon="pi pi-pencil" label="Edit" @click="dialog=true" />
+                                <Button severity="info" icon="pi pi-pencil" label="Edit" @click="editDialog(data)" />
                                 <Button severity="danger" icon="pi pi-trash" label="Delete" @click="confirmDelete()" />
                             </div>
                         </template>
@@ -71,7 +89,7 @@
                 </DataTable>
             </template>
         </Card>
-        <CreateUpdateCustomerDialog v-model:dialog="dialog"></CreateUpdateCustomerDialog>
+        <CustomerCreateUpdateDialog v-if="dialog" :customerData="customerData" v-model:dialog="dialog" @save="fetchCompany"></CustomerCreateUpdateDialog>
     </div>
     <ConfirmDialog></ConfirmDialog>
 </template>

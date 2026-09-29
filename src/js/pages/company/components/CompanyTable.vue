@@ -1,15 +1,18 @@
 <script setup>
-    import { DataTable, Column, Button, useConfirm, useToast, Card, Toolbar, ConfirmDialog, Paginator } from 'primevue'
+    import { DataTable, Column, Button, useConfirm, useToast, Card, Toolbar, ConfirmDialog, Paginator, InputText } from 'primevue';
     import CompanyCreateUpdateDialog from './CompanyCreateUpdateDialog.vue';
-    import { ref, onMounted } from 'vue'
+    import { ref, onMounted, watch } from 'vue';
     import CompanyService from '../CompanyService.js';
     import { usePagination } from '../../../composable/usePagination.js';
+    import SkeletonLoading from '../../../layout/SkeletonLoading.vue';
 
     const { 
         data: companies, 
         first, 
         rows, 
         loading, 
+        search,
+        onSearch,
         onPageChange, 
         init 
     } = usePagination((params) => companyService.getCompanies(params));
@@ -59,17 +62,34 @@
         });
     };
 
+    let debounceTimer = null;
+    watch(search, (newVal) => {
+        clearTimeout(debounceTimer);
+        
+        debounceTimer = setTimeout(() => {
+            // Automatically trigger search after user stops typing for 400ms
+            onSearch({
+                search: newVal || '',
+                rows: rows.value,
+                first: 0
+            });
+        }, 600); // 400ms delay
+    });
+
     onMounted(() => {
         init();
     });
 </script>
 <template>
-   <div>
+    <div>
         <Card>
             <template #title>
                 <Toolbar>
                     <template #start>
                         Company
+                    </template>
+                    <template #center>
+                        <InputText v-model="search" class="w-100" placeholder="Search..." name="search" />
                     </template>
                     <template #end>
                         <Button icon="pi pi-plus" label="Add" @click="addButton()"/>
@@ -77,7 +97,10 @@
                 </Toolbar>
             </template>
             <template #content>
-                <DataTable :value="companies.data">
+                <div v-if="loading" class="flex justify-center">
+                    <i class="pi pi-spin pi-spinner" style="font-size: 2.5rem"></i>
+                </div>
+                <DataTable v-else :value="companies.data">
                     <Column field="name" header="Name"></Column>
                     <Column field="address" header="Address"></Column>
                     <Column field="" header="Actions">
@@ -102,6 +125,6 @@
             </template>
         </Card>
         <CompanyCreateUpdateDialog v-if="dialog" v-model:dialog="dialog" :companyData="editCompany" @saved="init"></CompanyCreateUpdateDialog>
-   </div>
-   <ConfirmDialog></ConfirmDialog>
+    </div>
+    <ConfirmDialog></ConfirmDialog>
 </template>

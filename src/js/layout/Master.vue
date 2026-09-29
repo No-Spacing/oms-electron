@@ -18,7 +18,7 @@
 
     const items = ref([
         {
-            label: 'Home',
+            label: 'Dashboard',
             icon: 'pi pi-home',
             link: '/'
         },
@@ -86,9 +86,9 @@
                                     v-bind="props.action" 
                                     :to="item.link"
                                 >
-                                    <span :class="[item.icon, 'mr-2']" />
+                                    <i :class="[item.icon, 'mr-2']" style="font-size: 1.1rem;"></i>
                                     <span>{{ item.label }}</span>
-                                    <Badge v-if="item.badge" class="ml-auto" :value="item.badge" />
+                                    <Badge v-if="item.badge" class="ml-auto" :value="item.badge"    />
                                     <span v-if="item.shortcut" class="ml-auto border border-surface rounded bg-emphasis text-muted-color text-xs p-1">{{ item.shortcut }}</span>
                                 </RouterLink>
                             </template>

@@ -1,5 +1,5 @@
 <script setup>
-    import { Button, Card, Checkbox, Divider, useConfirm, useToast, ConfirmPopup, InputText, Select } from 'primevue';
+    import { Button, Card, Checkbox, Divider, useConfirm, useToast, ConfirmPopup, ConfirmDialog, InputText, Select } from 'primevue';
     import { ref, computed } from 'vue';
 
     const now = ref(new Date())
@@ -20,10 +20,9 @@
 
     const confirm1 = (event) => {
         confirm.require({
-            target: event.currentTarget,
-            message: 'Do you want to notify the Customer?',
+            message: 'Do you want to notify the customer?',
+            header: 'Confirmation',
             icon: 'pi pi-exclamation-triangle',
-            position: 'center',
             rejectProps: {
                 label: 'No',
                 severity: 'danger',
@@ -33,18 +32,16 @@
                 label: 'Yes'
             },
             accept: () => {
-                toast.add({ severity: 'info', summary: 'Confirmed', detail: 'You have accepted', life: 3000 });
-                isSent.value = 'sent';
+                toast.add({ severity: 'success', summary: 'Confirmed', detail: 'Message has been sent.', life: 3000 });
             },
             reject: () => {
-                toast.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
-                isSent.value = 'unsent';
+                toast.add({ severity: 'error', summary: 'Rejected', detail: 'Message has not been sent', life: 3000 });
             }
         });
     };
 </script>
 <template>
-    <ConfirmPopup></ConfirmPopup>
+    <ConfirmDialog></ConfirmDialog>
     <div>
         <Card>
             <template #title>
@@ -128,7 +125,7 @@
                             </div>
                             <!-- Invoice Settings -->
                             <div class="border flex items-center justify-between p-2 -mt-px">
-                                <div class="flex items-center gap-3 justify-between">
+                                <div class="flex items-center gap-2 justify-between">
                                     <!-- <Checkbox id="acknowledge" name="acknowledge" size="small" /> -->
                                     <span class="text-md">Invoice</span>
                                     <InputText placeholder="Invoice No." class="w-50" name="invoice_no" type="text" />
@@ -158,8 +155,8 @@
                                     </div>
                                 </div>
                                 <div class="flex flex-col gap-2">
-                                    <div class="flex items-center gap-2">
-                                        <InputText class="w-75" placeholder="Delivery Rider Name" />
+                                    <div class="flex gap-2 items-center">
+                                        <InputText class="w-75" placeholder="Enter Reference/Tracking No."/>
                                         <i v-tooltip.bottom="{ 
                                             value: 'Leave as blank if none.', 
                                             pt: { 
@@ -169,8 +166,8 @@
                                         class="pi pi-info-circle">
                                         </i>
                                     </div>
-                                    <div class="flex gap-2 items-center">
-                                        <InputText class="w-75" placeholder="Enter Reference/Tracking No."/>
+                                    <div class="flex items-center gap-2">
+                                        <InputText class="w-75" placeholder="Delivery Rider Name" />
                                         <i v-tooltip.bottom="{ 
                                             value: 'Leave as blank if none.', 
                                             pt: { 
@@ -184,7 +181,10 @@
                             </div>
                             <div class="flex flex-col border p-2 gap-2 -mt-px">
                                 <div class="flex items-center justify-between">
-                                    <label for="delivery_option" class="text-sm">Customer Pick-up</label>         
+                                    <div class="flex gap-2 items-center">
+                                        <span>Customer Pick-up</span>
+                                        <Select class="w-50" :options="['Meriton', 'Bulacan']" placeholder="Select a location"/>
+                                    </div>   
                                     <span v-if="isSent=='sent'" class="text-sm">Sent - {{ formattedDate }}</span>
                                     <span v-else-if="isSent=='unsent'" class="text-sm">Unsent - {{ formattedDate }}</span>
                                     <Button  v-else label="Send" icon="pi pi-send" severity="info" @click="confirm1($event)"></Button>

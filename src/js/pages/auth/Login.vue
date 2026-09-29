@@ -34,7 +34,7 @@ async function handleLogin () {
         localStorage.setItem('user', JSON.stringify(response.data.user));
 
         // Redirect
-        router.push({ name: 'Home' });
+        router.push({ name: 'Dashboard' });
     } catch (error) {
         if(error?.response?.status === 422) {
              toast.add({ 
@@ -60,11 +60,23 @@ async function handleLogin () {
 }
 
 onMounted(() => {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    if (prefersDark) {
-        document.documentElement.classList.add('my-app-dark')
+    const savedTheme = localStorage.getItem('theme');
+
+    if (savedTheme) {
+        // Respect the user's saved preference
+        if (savedTheme === 'dark') {
+            document.documentElement.classList.add('my-app-dark');
+        } else {
+            document.documentElement.classList.remove('my-app-dark');
+        }
+    } else {
+        // Fall back to system preference if nothing is saved yet
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        if (prefersDark) {
+            document.documentElement.classList.add('my-app-dark');
+        }
     }
-})
+});
 </script>
 
 <template>

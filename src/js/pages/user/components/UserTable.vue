@@ -1,34 +1,39 @@
 <script setup>
-    import { DataTable, Column, Button, useConfirm, useToast, Card, Toolbar, Paginator, ConfirmDialog } from 'primevue';
-    import { ref, onMounted } from 'vue';
+    import { DataTable, Column, Button, useConfirm, useToast, Card, Toolbar, Paginator, ConfirmDialog, InputText, InputGroup, Skeleton } from 'primevue';
+    import { ref, onMounted, watch } from 'vue';
     import UserCreateUpdateDialog from './UserCreateUpdateDialog.vue';
-    import UserService from '../UserService.js'
+    import UserService from '../UserService.js';
+    import { usePagination } from '../../../composable/usePagination.js';
+    import SkeletonLoading from '../../../layout/SkeletonLoading.vue';
 
     const userService = new UserService();
+
+    const { 
+        data: users, 
+        first, 
+        rows, 
+        loading, 
+        search,
+        onSearch,
+        onPageChange, 
+        init 
+    } = usePagination((params) => userService.getUsers(params));
+
     const confirm = useConfirm();
     const toast = useToast();
 
-    const users = ref([]);
     const dialog = ref(false);
     const editUser = ref([]);
-
-    const fetchUsers = async () => {
-        users.value = await userService.getUsers();
-    }
-
-    onMounted(() => {
-        fetchUsers();
-    }) 
 
     const addButton = (() => {
         dialog.value = true;
         editUser.value = null;
-    })
+    });
 
     const editButton = ((data) => {
         dialog.value = true;
         editUser.value = data;
-    })
+    });
 
     const confirmDelete = (data) => {
         confirm.require({
@@ -47,23 +52,45 @@
             },
             accept: () => {
                 userService.deleteUser(data);
-                fetchUsers();
+                init();
                 toast.add({ severity: 'info', summary: 'Confirmed', detail: 'Record deleted', life: 3000 });
             },
             reject: () => {
                 toast.add({ severity: 'error', summary: 'Rejected', detail: 'You have rejected', life: 3000 });
             }
         });
-    }
-    
+    };
+
+    let debounceTimer = null;
+
+    watch(search, (newVal) => {
+        clearTimeout(debounceTimer);
+        
+        debounceTimer = setTimeout(() => {
+            // Automatically trigger search after user stops typing for 400ms
+            onSearch({
+                search: newVal || '',
+                rows: rows.value,
+                first: 0
+            });
+        }, 600); // 400ms delay
+    });
+
+    onMounted(() => {
+        init();
+    });
 </script>
 <template>
     <div>
+        
         <Card>
             <template #title>
                 <Toolbar>
                     <template #start>
                         Users
+                    </template>
+                    <template #center>
+                        <InputText class="w-100" placeholder="Search..." name="search" v-model="search" />
                     </template>
                     <template #end>
                         <Button icon="pi pi-plus" label="Add" @click="addButton()"/>
@@ -71,7 +98,10 @@
                 </Toolbar>
             </template>
             <template #content>
-                <DataTable :value="users.data">
+                <div v-if="loading" class="flex justify-center">
+                    <i class="pi pi-spin pi-spinner" style="font-size: 2.5rem"></i>
+                </div>
+                <DataTable v-else :value="users.data">
                     <Column field="name" header="Name"></Column>
                     <Column field="email" header="Email"></Column>
                     <Column field="role.name" header="Role"></Column>
@@ -84,10 +114,10 @@
                         </template>
                     </Column>
                 </DataTable>
-                <Paginator :rows="10" :totalRecords="120" :rowsPerPageOptions="[10, 20, 30]"></Paginator>
+                <Paginator v-model:first="first" v-model:rows="rows" :totalRecords="users?.meta?.total" :rowsPerPageOptions="[10, 30, 50]" @page="onPageChange"></Paginator>
             </template>
         </Card>
-        <UserCreateUpdateDialog v-if="dialog" v-model:dialog="dialog" :userData="editUser" @saved="fetchUsers"></UserCreateUpdateDialog>
+        <UserCreateUpdateDialog v-if="dialog" v-model:dialog="dialog" :userData="editUser" @saved="init"></UserCreateUpdateDialog>
    </div>
    <ConfirmDialog></ConfirmDialog>
 </template>

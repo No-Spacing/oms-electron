@@ -1,8 +1,8 @@
 import apiClient from "../../services/axios";
 
 export default class UserService {
-    async getUsers () {
-        const response = await apiClient.get('/users');
+    async getUsers (params) {
+        const response = await apiClient.get('/users', { params });
         return response.data;
     }
 

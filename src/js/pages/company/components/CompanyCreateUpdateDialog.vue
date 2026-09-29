@@ -17,12 +17,6 @@
         companyData: Object
     })
     
-    const initialValues = reactive({
-        id: props.companyData?.id ? props.companyData?.id : null,
-        name: props?.companyData?.name,
-        address: props?.companyData?.address,
-    });
-
     const isVisible = computed({
         get() {
             return props.dialog
@@ -32,11 +26,20 @@
         }
     })
 
+    const initialValues = reactive({
+        id: props.companyData?.id ? props.companyData?.id : null,
+        name: props?.companyData?.name,
+        address: props?.companyData?.address,
+    });
+
     const resolver = ({ values }) => {
         const errors = {};
 
         if (!values.name) {
             errors.name = [{ message: 'Company name is required.' }];
+        }
+
+        if (!values.address) {
             errors.address = [{ message: 'Address field is required.'}]
         }
 
@@ -56,7 +59,6 @@
             })
         }
     }
-
 </script>
 <template>
     <div>

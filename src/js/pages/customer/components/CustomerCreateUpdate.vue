@@ -3,6 +3,7 @@
     import { Form, FormField } from '@primevue/forms';
     import { onMounted, reactive, ref, watch } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
+    import SkeletonLoading from '../../../layout/SkeletonLoading.vue';
 
     import CustomerService from '../CustomerService';
 
@@ -96,8 +97,10 @@
                 Customer's Information
             </template>
             <template #content>
-                 <div class="card flex justify-center mt-8">
-                    <Form v-if="!isLoading" v-slot="$form" class="flex flex-col gap-4 w-full" :initialValues="initialValues" :resolver="resolver"  @submit="onFormSubmit">
+                <SkeletonLoading v-if="isLoading"></SkeletonLoading>
+                 <div v-else class="card flex justify-center mt-8">
+                    
+                    <Form v-slot="$form" class="flex flex-col gap-4 w-full" :initialValues="initialValues" :resolver="resolver"  @submit="onFormSubmit">
                         <InputText type="text" name="id" hidden/>
                         <FormField name="name" class="flex flex-col gap-1">
                             <label for="name">Name</label>

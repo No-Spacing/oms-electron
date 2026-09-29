@@ -1,6 +1,6 @@
 <script setup>
-    import { DataTable, Column, Button, useConfirm, useToast, Card, Toolbar, ConfirmDialog } from 'primevue'
-    import { ref, onMounted } from 'vue'
+    import { DataTable, Column, Button, useConfirm, useToast, Card, Toolbar, ConfirmDialog, Paginator, InputText } from 'primevue';
+    import { onMounted, watch } from 'vue';
     import CustomerService from '../CustomerService';
     import { usePagination } from '../../../composable/usePagination.js';
 
@@ -11,6 +11,8 @@
         first, 
         rows, 
         loading, 
+        search,
+        onSearch,
         onPageChange, 
         init 
     } = usePagination((params) => customerService.getCustomers(params));
@@ -42,6 +44,21 @@
         });
     };
 
+    let debounceTimer = null;
+
+    watch(search, (newVal) => {
+        clearTimeout(debounceTimer);
+        
+        debounceTimer = setTimeout(() => {
+            // Automatically trigger search after user stops typing for 400ms
+            onSearch({
+                search: newVal || '',
+                rows: rows.value,
+                first: 0
+            });
+        }, 600); // 400ms delay
+    });
+
     onMounted(() => {
         init();
     })
@@ -54,6 +71,9 @@
                     <template #start>
                         Customer
                     </template>
+                    <template #center>
+                        <InputText class="w-100" placeholder="Search..." name="search" v-model="search" />
+                    </template>
                     <template #end>
                         <RouterLink :to="{ name: 'customer-create-update' }">
                             <Button icon="pi pi-plus" label="Add" />
@@ -62,7 +82,10 @@
                 </Toolbar>
             </template>
             <template #content>
-                <DataTable :value="customers.data">
+                <div v-if="loading" class="flex justify-center">
+                    <i class="pi pi-spin pi-spinner" style="font-size: 2.5rem"></i>
+                </div>
+                <DataTable v-else :value="customers.data">
                     <Column field="name" header="Name"></Column>
                     <Column field="company.name" header="Company"></Column>
                     <Column field="mobile_no" header="Mobile No."></Column>
@@ -78,6 +101,13 @@
                         </template>
                     </Column>
                 </DataTable>
+                <Paginator
+                    v-model:first="first"
+                    v-model:rows="rows"
+                    :totalRecords="customers.meta?.total || 0" 
+                    @page="onPageChange" 
+                    :rowsPerPageOptions="[10, 30, 50]"
+                />
             </template>
         </Card>
     </div>

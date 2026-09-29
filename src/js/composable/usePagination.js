@@ -5,14 +5,15 @@ export function usePagination(fetchFunction, initialRows = 10) {
     const first = ref(0);
     const rows = ref(initialRows);
     const loading = ref(false);
+    const search = ref('');
 
-    const loadData = async (page = 1, perPage = rows.value) => {
+    const loadData = async (page = 1, perPage = rows.value, searchQuery = search.value) => {
         loading.value = true;
         try {
-            // Passes page and per_page (Laravel friendly)
             data.value = await fetchFunction({
                 page: page,
-                per_page: perPage
+                per_page: perPage,
+                search: searchQuery
             });
         } catch (error) {
             console.error('Pagination fetch error:', error);
@@ -27,18 +28,29 @@ export function usePagination(fetchFunction, initialRows = 10) {
         
         // PrimeVue is 0-indexed, Laravel is 1-indexed
         const targetPage = event.page + 1;
-        loadData(targetPage, event.rows);
+        loadData(targetPage, rows.value, search.value);
+    };
+
+    const onSearch = (event) => {
+        // Usually, when searching, you want to reset back to the first page (0)
+        first.value = 0; 
+        rows.value = event.rows || rows.value;
+        search.value = event.search;
+
+        loadData(1, rows.value, search.value);
     };
 
     // Initial load helper
-    const init = () => loadData(1, rows.value);
+    const init = () => loadData(1, rows.value, search.value);
 
     return {
         data,
         first,
         rows,
         loading,
+        search,
         onPageChange,
+        onSearch,
         loadData,
         init
     };

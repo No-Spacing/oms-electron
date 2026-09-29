@@ -1,6 +1,6 @@
 import { createMemoryHistory, createRouter } from 'vue-router';
 
-import Home from './pages/Home.vue';
+import Dashboard from './pages/Dashboard.vue';
 import About from './pages/About.vue';
 import Master from './layout/Master.vue';
 
@@ -40,9 +40,10 @@ const routes = [
         },
         children: [
             {
-                path: '/home',
-                name: 'Home',
-                component: Home
+                path: '/dashboard',
+                name: 'Dashboard',
+                component: Dashboard,
+                meta: { breadcrumb: 'Dashboard' }
             },
             { 
                 path: '/about', 
@@ -143,7 +144,7 @@ router.beforeEach((to, from) => {
   }
 
   if (requiresGuest && isAuthenticated) {
-    return { name: 'Home' };
+    return { name: 'Dashboard' };
   }
 });
 

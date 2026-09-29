@@ -3,17 +3,12 @@
     import { useRoute, useRouter } from 'vue-router'
     import { Breadcrumb, Card, ToggleButton, Button,Toolbar } from 'primevue'
     import axios from 'axios'
+    import apiClient from '../services/axios';
 
     const token = localStorage.getItem('authToken');
 
     const route = useRoute()
     const router = useRouter();
-
-    // Root home icon configuration
-    const home = ref({
-        icon: 'pi pi-home',
-        route: '/home'
-    })
 
     // Dynamically generate breadcrumbs based on matched route hierarchy
     const items = computed(() => {
@@ -27,14 +22,8 @@
         }))
     })
 
-    const isDark = ref(false);
-    
-    const toggleDarkMode = () => {
-        document.documentElement.classList.toggle('my-app-dark');
-    };
-
     const handleLogout = async () => {
-        const response = await axios.post('http://127.0.0.1:8000/api/logout', 
+        const response = await apiClient.post('http://127.0.0.1:8000/api/logout', 
             {}, // <-- 2nd argument: Request body data (empty here)
             {   // <-- 3rd argument: Config object (headers go here!)
                 headers: {
@@ -49,18 +38,41 @@
         router.push({ name: 'Login' });
     };
 
+    
+    const isDark = ref(false);
+
+    const toggleDarkMode = () => {
+        // Toggle the class on the html element
+        const root = document.documentElement;
+        root.classList.toggle('my-app-dark');
+        
+        // Check if dark mode is now active
+        const active = root.classList.contains('my-app-dark');
+        
+        // Update the button state and save to localStorage
+        isDark.value = active;
+        localStorage.setItem('theme', active ? 'dark' : 'light');
+    };
+
     onMounted(() => {
-        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-        if (prefersDark) {
-            document.documentElement.classList.add('my-app-dark')
+        const savedTheme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+        // Determine if dark mode should be active
+        if (savedTheme === 'dark' || (!savedTheme && prefersDark)) {
+            document.documentElement.classList.add('my-app-dark');
+            isDark.value = true;  // Sync toggle button to 'ON' (Dark)
+        } else {
+            document.documentElement.classList.remove('my-app-dark');
+            isDark.value = false; // Sync toggle button to 'OFF' (Light)
         }
-    })
+    });
 </script>
 
 <template>
     <Toolbar>
         <template #start>
-            <Breadcrumb class="!bg-transparent border-none shadow-none" :home="home" :model="items">
+            <Breadcrumb class="!bg-transparent border-none shadow-none" :model="items">
                 <!-- Optional: Custom item template to use Vue Router's router-link -->
                 <template #item="{ item, props }">
                     <router-link v-if="item.route" :to="item.route" custom v-slot="{ href, navigate }">
@@ -76,9 +88,16 @@
             </Breadcrumb>
         </template>
         <template #end>
-            <div class="flex gap-2">
-                <Button icon="pi pi-spin pi-spinner-dotted" severity="secondary"  rounded aria-label="Refresh" size="large" />
-                <ToggleButton v-model="isDark" onLabel="Light" offLabel="Dark" @click="toggleDarkMode" onIcon="pi pi-sun" offIcon="pi pi-moon" class="w-36" />
+            <div class="flex gap-4">
+                <!-- <Button icon="pi pi-spin pi-spinner-dotted" severity="secondary"  rounded aria-label="Refresh" size="large" /> -->
+                <Button 
+                    :icon="isDark ? 'pi pi-sun' : 'pi pi-moon'" 
+                    severity="secondary" 
+                    text 
+                    rounded 
+                    @click="toggleDarkMode" 
+                    size="large"
+                />
                 <Button icon="pi pi-sign-out" severity="secondary"  rounded aria-label="Refresh" size="large" @click="handleLogout()"/>
             </div>
         </template>

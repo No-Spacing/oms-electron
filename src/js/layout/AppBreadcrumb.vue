@@ -1,8 +1,7 @@
 <script setup>
     import { computed, ref, onMounted } from 'vue'
     import { useRoute, useRouter } from 'vue-router'
-    import { Breadcrumb, Card, ToggleButton, Button,Toolbar } from 'primevue'
-    import axios from 'axios'
+    import { Breadcrumb, Button, Toolbar } from 'primevue'
     import apiClient from '../services/axios';
 
     const token = localStorage.getItem('authToken');
@@ -23,7 +22,7 @@
     })
 
     const handleLogout = async () => {
-        const response = await apiClient.post('http://127.0.0.1:8000/api/logout', 
+        const response = await apiClient.post('/logout', 
             {}, // <-- 2nd argument: Request body data (empty here)
             {   // <-- 3rd argument: Config object (headers go here!)
                 headers: {

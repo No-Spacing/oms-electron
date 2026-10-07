@@ -1,5 +1,5 @@
 <script setup>
-    import { Dialog, Button, InputText, Divider, Message, useToast } from 'primevue';
+    import { Dialog, Button, InputText, InputGroup, InputGroupAddon, Message, useToast } from 'primevue';
     import { computed, ref, reactive } from 'vue'
     import CompanyService from '../CompanyService';
     import { Form } from '@primevue/forms';
@@ -46,8 +46,8 @@
             errors.address = [{ message: 'Address field is required.'}]
         }
 
-        if (!values.mobile_no) {
-            errors.mobile_no = [{ message: 'Mobile No. field is required.'}]
+        if (!values.mobile_no || String(values.mobile_no).length !== 10) {
+            errors.mobile_no = [{ message: 'Mobile No. must be exactly 10 digits.' }];
         }
 
         if (!values.email) {
@@ -76,7 +76,7 @@
         <Dialog v-model:visible="isVisible" modal header="Customer" :style="{ width: '35rem' }">
             <span class="text-surface-500 dark:text-surface-400 block mb-8">Customers's Information</span>
             
-            <Form v-slot="$form" class="flex flex-col gap-4 w-full" :initialValues="initialValues" :resolver="resolver" @submit="onFormSubmit">
+            <Form v-slot="$form" class="flex flex-col gap-2 w-full" :initialValues="initialValues" :resolver="resolver" @submit="onFormSubmit">
                 <InputText type="text" name="id" hidden />
                 <InputText type="text" name="company_id" hidden />
                 <div class="flex flex-col gap-2">
@@ -85,16 +85,20 @@
                     <Message v-if="$form.name?.invalid || error.errors?.name" severity="error" size="small" variant="simple">{{ $form.name.error?.message || error.errors?.name[0] }}</Message>
                 </div>
                 <div class="flex flex-col gap-2">
-                    <label for="name" class="font-semibold w-24">Address</label>
-                    <InputText id="name" name="address" class="flex-auto" autocomplete="off" />
+                    <label for="address" class="font-semibold w-24">Address</label>
+                    <InputText id="address" name="address" class="flex-auto" autocomplete="off" />
                     <Message v-if="$form.address?.invalid || error.errors?.address" severity="error" size="small" variant="simple">{{ $form.address.error?.message || error.errors?.address[0] }}</Message>
                 </div>
                 <div class="flex flex-col gap-2">
-                    <label for="number" name="number" class="font-semibold w-24">Mobile No.</label>
-                    <InputText id="number" name="mobile_no" class="flex-auto" autocomplete="off" />
+                    <label for="mobile_no" class="font-semibold w-24">Mobile No.</label>
+                    <InputGroup>
+                        <InputGroupAddon>
+                            <span>+63</span>
+                        </InputGroupAddon>
+                        <InputText id="mobile_no" name="mobile_no" placeholder="9XXXXXXXXX"/>
+                    </InputGroup>
                     <Message v-if="$form.mobile_no?.invalid || error.errors?.mobile_no" severity="error" size="small" variant="simple">{{ $form.mobile_no.error?.message || error.errors?.mobile_no[0] }}</Message>
                 </div>
-
                 <div class="flex flex-col gap-2">
                     <label for="email" class="font-semibold w-24">Email</label>
                     <InputText id="email" name="email" class="flex-auto" autocomplete="off" />

@@ -50,13 +50,12 @@
         clearTimeout(debounceTimer);
         
         debounceTimer = setTimeout(() => {
-            // Automatically trigger search after user stops typing for 400ms
             onSearch({
                 search: newVal || '',
                 rows: rows.value,
                 first: 0
             });
-        }, 600); // 400ms delay
+        }, 600);
     });
 
     onMounted(() => {
@@ -88,7 +87,11 @@
                 <DataTable v-else :value="customers.data">
                     <Column field="name" header="Name"></Column>
                     <Column field="company.name" header="Company"></Column>
-                    <Column field="mobile_no" header="Mobile No."></Column>
+                    <Column field="mobile_no" header="Mobile No.">
+                        <template #body="data">
+                           <span>+63{{ data.data.mobile_no }}</span>
+                        </template>
+                    </Column>
                     <Column field="email" header="Email Address"></Column>
                     <Column field="" header="Actions">
                         <template #body="data">

@@ -1,5 +1,5 @@
 <script setup>
-    import { Card, Button, InputText, Message, Select, useToast } from 'primevue';
+    import { Card, Button, InputText, Message, Select, useToast, InputGroup, InputGroupAddon } from 'primevue';
     import { Form, FormField } from '@primevue/forms';
     import { onMounted, reactive, ref, watch } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
@@ -35,8 +35,8 @@
         if (!values.address) {
             errors.address = [{ message: 'Address field is required.' }];
         }
-        if (!values.mobile_no) {
-            errors.mobile_no = [{ message: 'Mobile No. field is required.' }];
+        if (!values.mobile_no || String(values.mobile_no).length !== 10) {
+            errors.mobile_no = [{ message: 'Mobile No. must be exactly 10 digits.' }];
         }
         if (!values.email) {
             errors.email = [{ message: 'Email field is required.' }];
@@ -119,7 +119,12 @@
                         </FormField>
                         <FormField class="flex flex-col gap-1">
                             <label for="name">Mobile No.</label>
-                            <InputText name="mobile_no" type="text" placeholder="Mobile No." />
+                            <InputGroup>
+                                <InputGroupAddon>
+                                    <span>+63</span>
+                                </InputGroupAddon>
+                                <InputText id="mobile_no" name="mobile_no" placeholder="9XXXXXXXXX"/>
+                            </InputGroup>
                             <Message v-if="$form.mobile_no?.invalid || errors.errors?.mobile_no" severity="error" size="small" variant="simple">{{ $form.mobile_no.error?.message || errors.errors?.mobile_no[0] }}</Message>
                         </FormField>
                         <FormField class="flex flex-col gap-1">

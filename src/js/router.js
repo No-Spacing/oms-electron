@@ -1,6 +1,6 @@
 import { createMemoryHistory, createRouter } from 'vue-router';
 
-import Dashboard from './pages/Dashboard.vue';
+import Dashboard from './pages/dashboard/Dashboard.vue';
 import About from './pages/About.vue';
 import Master from './layout/Master.vue';
 
@@ -106,7 +106,7 @@ const routes = [
                         meta: { breadcrumb: 'Record Info'}
                     },
                     {
-                        path: 'record-view',
+                        path: 'record-view/:id?',
                         name: 'record-view',
                         component: RecordView,
                         meta: { breadcrumb: 'Record Info'}

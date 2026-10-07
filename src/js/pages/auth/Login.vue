@@ -20,7 +20,6 @@ const form = reactive({
 })
 const rememberMe = ref(false);
 
-// Computed background image based on AM/PM
 const backgroundImage = ref('../../../assets/welcome.jpg');
 
 async function handleLogin () {
@@ -43,17 +42,21 @@ async function handleLogin () {
                 detail: "We couldn't find an account matching those details. Please verify your info and try again.", 
                 life: 10000 
             });
-        }
-        
-        if(error?.response?.status == 500){
+        } else if (error?.response?.status == 500){
             toast.add({ 
                 severity: 'error', 
                 summary: 'Error', 
-                detail: "API connection failed. Please verify your network status or try again later. If the problem persists, please contact the developers.", 
+                detail: "An error code 500 occured. Please contact your IT administrator", 
+                life: 10000 
+            });
+        } else {
+            toast.add({ 
+                severity: 'error', 
+                summary: 'Error', 
+                detail: "System failed to connect to the API's endpoint. Please contact your IT administrator", 
                 life: 10000 
             });
         }
-        
     } finally {
         loading.value = false; // Runs whether it succeeds or fails
     }

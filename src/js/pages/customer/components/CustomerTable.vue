@@ -2,7 +2,7 @@
     import { DataTable, Column, Button, useConfirm, useToast, Card, Toolbar, ConfirmDialog, Paginator, InputText } from 'primevue';
     import { onMounted, watch } from 'vue';
     import CustomerService from '../CustomerService';
-    import { usePagination } from '../../../composable/usePagination.js';
+    import { useFilteredPagination } from '../../../composable/useFilteredPagination.js';
 
     const customerService = new CustomerService();
 
@@ -15,7 +15,7 @@
         onSearch,
         onPageChange, 
         init 
-    } = usePagination((params) => customerService.getCustomers(params));
+    } = useFilteredPagination((params) => customerService.getCustomers(params));
      
     const confirm = useConfirm();
     const toast = useToast();
@@ -84,33 +84,35 @@
                 <div v-if="loading" class="flex justify-center">
                     <i class="pi pi-spin pi-spinner" style="font-size: 2.5rem"></i>
                 </div>
-                <DataTable v-else :value="customers.data">
-                    <Column field="name" header="Name"></Column>
-                    <Column field="company.name" header="Company"></Column>
-                    <Column field="mobile_no" header="Mobile No.">
-                        <template #body="data">
-                           <span>+63{{ data.data.mobile_no }}</span>
-                        </template>
-                    </Column>
-                    <Column field="email" header="Email Address"></Column>
-                    <Column field="" header="Actions">
-                        <template #body="data">
-                            <div class="flex gap-2">
-                                <RouterLink :to="{ name:'customer-create-update', params: { id: data.data.id } }">
-                                    <Button severity="info" icon="pi pi-pencil" label="Edit" />
-                                </RouterLink>
-                                <Button severity="danger" icon="pi pi-trash" label="Delete" @click="confirmDelete(data)" />
-                            </div>
-                        </template>
-                    </Column>
-                </DataTable>
-                <Paginator
-                    v-model:first="first"
-                    v-model:rows="rows"
-                    :totalRecords="customers.meta?.total || 0" 
-                    @page="onPageChange" 
-                    :rowsPerPageOptions="[10, 30, 50]"
-                />
+                <div v-else>
+                    <DataTable :value="customers.data">
+                        <Column field="name" header="Name"></Column>
+                        <Column field="company.name" header="Company"></Column>
+                        <Column field="mobile_no" header="Mobile No.">
+                            <template #body="data">
+                            <span>+63{{ data.data.mobile_no }}</span>
+                            </template>
+                        </Column>
+                        <Column field="email" header="Email Address"></Column>
+                        <Column field="" header="Actions">
+                            <template #body="data">
+                                <div class="flex gap-2">
+                                    <RouterLink :to="{ name:'customer-create-update', params: { id: data.data.id } }">
+                                        <Button severity="info" icon="pi pi-pencil" label="Edit" />
+                                    </RouterLink>
+                                    <Button severity="danger" icon="pi pi-trash" label="Delete" @click="confirmDelete(data)" />
+                                </div>
+                            </template>
+                        </Column>
+                    </DataTable>
+                    <Paginator
+                        v-model:first="first"
+                        v-model:rows="rows"
+                        :totalRecords="customers.meta?.total || 0" 
+                        @page="onPageChange" 
+                        :rowsPerPageOptions="[10, 30, 50]"
+                    />
+                </div>
             </template>
         </Card>
     </div>

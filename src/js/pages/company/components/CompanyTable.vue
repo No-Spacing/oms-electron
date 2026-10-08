@@ -3,7 +3,7 @@
     import CompanyCreateUpdateDialog from './CompanyCreateUpdateDialog.vue';
     import { ref, onMounted, watch } from 'vue';
     import CompanyService from '../CompanyService.js';
-    import { usePagination } from '../../../composable/usePagination.js';
+    import { useFilteredPagination } from '../../../composable/useFilteredPagination.js';
     import SkeletonLoading from '../../../layout/SkeletonLoading.vue';
 
     const { 
@@ -15,7 +15,7 @@
         onSearch,
         onPageChange, 
         init 
-    } = usePagination((params) => companyService.getCompanies(params));
+    } = useFilteredPagination((params) => companyService.getCompanies(params));
     
     const companyService = new CompanyService();
 
@@ -100,28 +100,30 @@
                 <div v-if="loading" class="flex justify-center">
                     <i class="pi pi-spin pi-spinner" style="font-size: 2.5rem"></i>
                 </div>
-                <DataTable v-else :value="companies.data">
-                    <Column field="name" header="Name"></Column>
-                    <Column field="address" header="Address"></Column>
-                    <Column field="" header="Actions">
-                        <template #body="data">
-                            <div class="flex gap-2">
-                                <RouterLink :to="{ name: 'view-company', params: { id: data.data.id } }">
-                                    <Button severity="success" icon="pi pi-eye" label="View"/>
-                                </RouterLink>
-                                <Button severity="info" icon="pi pi-pencil" label="Edit" @click="editButton(data.data)"/>
-                                <Button severity="danger" icon="pi pi-trash" label="Delete" @click="confirmDelete(data.data)" />
-                            </div>
-                        </template>
-                    </Column>
-                </DataTable>
-                <Paginator
-                    v-model:first="first"
-                    v-model:rows="rows"
-                    :totalRecords="companies.meta?.total || 0" 
-                    @page="onPageChange" 
-                    :rowsPerPageOptions="[10, 30, 50]"
-                />
+                <div v-else>
+                    <DataTable :value="companies.data">
+                        <Column field="name" header="Name"></Column>
+                        <Column field="address" header="Address"></Column>
+                        <Column field="" header="Actions">
+                            <template #body="data">
+                                <div class="flex gap-2">
+                                    <RouterLink :to="{ name: 'view-company', params: { id: data.data.id } }">
+                                        <Button severity="success" icon="pi pi-eye" label="View"/>
+                                    </RouterLink>
+                                    <Button severity="info" icon="pi pi-pencil" label="Edit" @click="editButton(data.data)"/>
+                                    <Button severity="danger" icon="pi pi-trash" label="Delete" @click="confirmDelete(data.data)" />
+                                </div>
+                            </template>
+                        </Column>
+                    </DataTable>
+                    <Paginator
+                        v-model:first="first"
+                        v-model:rows="rows"
+                        :totalRecords="companies.meta?.total || 0" 
+                        @page="onPageChange" 
+                        :rowsPerPageOptions="[10, 30, 50]"
+                    />
+                </div>
             </template>
         </Card>
         <CompanyCreateUpdateDialog v-if="dialog" v-model:dialog="dialog" :companyData="editCompany" @saved="init"></CompanyCreateUpdateDialog>

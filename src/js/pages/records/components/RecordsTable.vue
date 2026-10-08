@@ -19,7 +19,7 @@ import {
     Paginator,
 } from "primevue";
 import RecordService from '../RecordService'
-import { usePagination } from '../../../composable/usePagination'
+import { useFilteredPagination } from '../../../composable/useFilteredPagination'
 
 const recordService = new RecordService();
 
@@ -35,7 +35,7 @@ const {
     setFilter, 
     resetFilters,
     init 
-} = usePagination((params) => recordService.getRecords(params));
+} = useFilteredPagination((params) => recordService.getRecords(params));
 
 const confirm = useConfirm();
 const toast = useToast();

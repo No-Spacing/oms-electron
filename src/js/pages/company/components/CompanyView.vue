@@ -128,27 +128,29 @@
                 <div v-if="loading" class="flex justify-center">
                     <i class="pi pi-spin pi-spinner" style="font-size: 2.5rem"></i>
                 </div>
-                <DataTable v-else :value="customers.data">
-                    <Column field="name" header="Name"></Column>
-                    <Column field="address" header="Address"></Column>
-                    <Column field="mobile_no" header="Mobile No."></Column>
-                    <Column field="email" header="Email Address"></Column>
-                    <Column field="" header="Actions">
-                        <template #body="data">
-                            <div class="flex gap-2">
-                                <Button severity="info" icon="pi pi-pencil" label="Edit" @click="editDialog(data)" />
-                                <Button severity="danger" icon="pi pi-trash" label="Delete" @click="confirmDelete()" />
-                            </div>
-                        </template>
-                    </Column>
-                </DataTable>
-                <Paginator  
-                    v-model:first="firstPage"
-                    v-model:rows="rows"
-                    :totalRecords="customers?.meta?.total" 
-                    :rowsPerPageOptions="[10, 20, 30]" 
-                    @page="onPageChange" 
-                />
+                <div v-else>
+                    <DataTable :value="customers.data">
+                        <Column field="name" header="Name"></Column>
+                        <Column field="address" header="Address"></Column>
+                        <Column field="mobile_no" header="Mobile No."></Column>
+                        <Column field="email" header="Email Address"></Column>
+                        <Column field="" header="Actions">
+                            <template #body="data">
+                                <div class="flex gap-2">
+                                    <Button severity="info" icon="pi pi-pencil" label="Edit" @click="editDialog(data)" />
+                                    <Button severity="danger" icon="pi pi-trash" label="Delete" @click="confirmDelete()" />
+                                </div>
+                            </template>
+                        </Column>
+                    </DataTable>
+                    <Paginator  
+                        v-model:first="firstPage"
+                        v-model:rows="rows"
+                        :totalRecords="customers?.meta?.total" 
+                        :rowsPerPageOptions="[10, 20, 30]" 
+                        @page="onPageChange" 
+                    />
+                </div>
             </template>
         </Card>
         <CustomerCreateUpdateDialog v-if="dialog" :customerData="customerData" :companyData="company" v-model:dialog="dialog" @saved="fetchCompany"></CustomerCreateUpdateDialog>

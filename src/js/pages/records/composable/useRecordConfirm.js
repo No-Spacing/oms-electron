@@ -7,7 +7,7 @@ export function useRecordConfirm() {
     const toast = useToast();
     const recordService = new RecordService();
 
-    const triggerConfirm = (params, form, route, onSuccess, onError) => {
+    const triggerConfirm = (params, onSuccess, onError) => {
         confirm.require({
             message: 'Do you want to notify the customer?',
             header: 'Confirmation',
@@ -21,12 +21,18 @@ export function useRecordConfirm() {
                 label: 'Yes'
             },
             accept: async () => {
-                // Your accept logic here...
+                recordService.updateStatus({
+                    ...params, 
+                    status_send: 'sent'
+                })
                 toast.add({ severity: 'success', summary: 'Confirmed', detail: 'Message sent.', life: 3000 });
-                if (onSuccess) onSuccess();
+                if(onSuccess) onSuccess();
             },
             reject: async () => {
-                // Your reject logic here...
+                recordService.updateStatus({
+                    ...params, 
+                    status_send: 'unsent'
+                })
                 toast.add({ severity: 'error', summary: 'Rejected', detail: 'Message not sent', life: 3000 });
                 if (onError) onError();
             }

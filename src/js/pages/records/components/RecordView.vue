@@ -30,95 +30,53 @@
 
     const confirm1 = (params) => {
         const values = ref(null);
-        confirm.require({
-            message: 'Do you want to notify the customer?',
-            header: 'Confirmation',
-            icon: 'pi pi-exclamation-triangle',
-            rejectProps: {
-                label: 'No',
-                severity: 'danger',
-                outlined: true
-            },
-            acceptProps: {
-                label: 'Yes'
-            },
-            accept: async () => {
-                switch(params) {
-                    case 'invoice':
-                        if (form.invoice_no == null) {
-                            invoiceNoValid.value = true;
-                        } else {
-                            values.value = {
-                                invoice_no: form.invoice_no
-                            }
-                            invoiceNoValid.value = false;
-                        }
-                        
-                    break;
-                    case 'delivery': 
-                        if(form.courier == null) {
-                            deliveryValid.value = true;
-                        } else {
-                            deliveryValid.value = false;
-                            values.value = {
-                                courier: form.courier,
-                                reference_no: form.reference_no,
-                                rider_name: form.rider_name,
-                            }
-                        }
-                    break;
+        const inputValid = ref(false);
+        switch(params) {
+            case 'invoice':
+                if (form.invoice_no == null) {
+                    invoiceNoValid.value = true;
+                    inputValid.value = false
+                } else {
+                    values.value = {
+                        invoice_no: form.invoice_no
+                    }
+                    invoiceNoValid.value = false;
+                    inputValid.value = true
                 }
+            break;
+            case 'delivery': 
+                if(form.courier == null) {
+                    deliveryValid.value = true;
+                    inputValid.value = false
+                } else {
+                    deliveryValid.value = false;
+                    inputValid.value = true;
+                    values.value = {
+                        courier: form.courier,
+                        reference_no: form.reference_no,
+                        rider_name: form.rider_name,
+                    };
+                }
+            break;
+            default:
+                inputValid.value = true;
+        }
 
-                if(!invoiceNoValid.value || !deliveryValid.value) {
-                    const response = await recordService.updateStatus({
-                        id: route.params.id,
-                        status: params,
-                        status_send: 'sent',
-                        values: values.value
-                    });
-
-                    console.log(response);
-
-                    toast.add({ severity: 'success', summary: 'Confirmed', detail: 'Message has been sent.', life: 3000 });
+        if(inputValid.value) {
+            triggerConfirm(
+                {
+                    id: route.params.id,
+                    status: params,
+                    values: values.value
+                },
+                () => {
+                    fetchRecord();
+                },
+                () => {
                     fetchRecord();
                 }
-            },
-            reject: async () => {
-                switch(params) {
-                    case 'invoice':
-                        if(form.invoice_no == null) {
-                            invoiceNoValid.value = true;
-                        }
-                        values.value = {
-                           invoice_no: form.invoice_no
-                        }
-                    break;
-                    case 'delivery': 
-                        if(form.courier == null) {
-                            deliveryValid.value = true;
-                        } else {
-                            deliveryValid.value = false;
-                            values.value = {
-                                courier: form.courier,
-                                reference_no: form.reference_no,
-                                rider_name: form.rider_name,
-                            }
-                        }
-                    break;
-                }
-                if(!invoiceNoValid.value || !deliveryValid.value) {
-                    const response = await recordService.updateStatus({
-                        id: route.params.id,
-                        status: params,
-                        status_send: 'unsent',
-                        values: values.value
-                    });
-
-                    toast.add({ severity: 'error', summary: 'Rejected', detail: 'Message has not been sent', life: 3000 });
-                    fetchRecord();
-                }
-            }
-        });
+            )
+        }
     };
     
     const fetchRecord = async() => {
@@ -207,7 +165,7 @@
                                                 <label for="acknowledge" class="">Acknowledge</label>
                                             </div>
                                             <div class="flex gap-2">
-                                                <Button v-if="!record.acknowledge_at" label="Send" icon="pi pi-send" severity="info" @click="triggerConfirm('acknowledge')"></Button>
+                                                <Button v-if="!record.acknowledge_at" label="Send" icon="pi pi-send" severity="info" @click="confirm1('acknowledge')"></Button>
                                                 <span v-else>{{ record.acknowledge_send_status.toUpperCase() }} - {{ record.acknowledge_at }}</span>
                                             </div>
                                         </div>

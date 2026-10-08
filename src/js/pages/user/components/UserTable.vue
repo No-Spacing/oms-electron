@@ -3,7 +3,7 @@
     import { ref, onMounted, watch } from 'vue';
     import UserCreateUpdateDialog from './UserCreateUpdateDialog.vue';
     import UserService from '../UserService.js';
-    import { usePagination } from '../../../composable/usePagination.js';
+    import { useFilteredPagination } from '../../../composable/useFilteredPagination.js';
     import SkeletonLoading from '../../../layout/SkeletonLoading.vue';
 
     const userService = new UserService();
@@ -17,7 +17,7 @@
         onSearch,
         onPageChange, 
         init 
-    } = usePagination((params) => userService.getUsers(params));
+    } = useFilteredPagination((params) => userService.getUsers(params));
 
     const confirm = useConfirm();
     const toast = useToast();
@@ -101,20 +101,22 @@
                 <div v-if="loading" class="flex justify-center">
                     <i class="pi pi-spin pi-spinner" style="font-size: 2.5rem"></i>
                 </div>
-                <DataTable v-else :value="users.data">
-                    <Column field="name" header="Name"></Column>
-                    <Column field="email" header="Email"></Column>
-                    <Column field="role.name" header="Role"></Column>
-                    <Column field="" header="Actions">
-                        <template #body="data">
-                            <div class="flex gap-2">
-                                <Button severity="info" icon="pi pi-pencil" label="Edit" @click="editButton(data.data)"/>
-                                <Button severity="danger" icon="pi pi-trash" label="Delete" @click="confirmDelete(data.data)" />
-                            </div>
-                        </template>
-                    </Column>
-                </DataTable>
-                <Paginator v-model:first="first" v-model:rows="rows" :totalRecords="users?.meta?.total" :rowsPerPageOptions="[10, 30, 50]" @page="onPageChange"></Paginator>
+                <div v-else>
+                    <DataTable :value="users.data">
+                        <Column field="name" header="Name"></Column>
+                        <Column field="email" header="Email"></Column>
+                        <Column field="role.name" header="Role"></Column>
+                        <Column field="" header="Actions">
+                            <template #body="data">
+                                <div class="flex gap-2">
+                                    <Button severity="info" icon="pi pi-pencil" label="Edit" @click="editButton(data.data)"/>
+                                    <Button severity="danger" icon="pi pi-trash" label="Delete" @click="confirmDelete(data.data)" />
+                                </div>
+                            </template>
+                        </Column>
+                    </DataTable>
+                    <Paginator v-model:first="first" v-model:rows="rows" :totalRecords="users?.meta?.total" :rowsPerPageOptions="[10, 30, 50]" @page="onPageChange"></Paginator>
+                </div>
             </template>
         </Card>
         <UserCreateUpdateDialog v-if="dialog" v-model:dialog="dialog" :userData="editUser" @saved="init"></UserCreateUpdateDialog>

@@ -1,6 +1,6 @@
 import { ref } from 'vue';
 
-export function usePagination(fetchFunction, initialRows = 10, initialFilters = null) {
+export function useFilteredPagination(fetchFunction, initialRows = 10, initialFilters = null) {
     const data = ref({ data: [], meta: { total: 0 } });
     const first = ref(0);
     const rows = ref(initialRows);

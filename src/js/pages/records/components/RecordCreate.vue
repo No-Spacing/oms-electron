@@ -49,8 +49,6 @@
     const fetchCustomer = async () => {
         try {
             const response = await customerService.getCustomers();  
-            // Debug check: If your API wraps data inside another object (like Laravel pagination), 
-            // you might need response.data.data. Change this based on your API structure.
             customers.value = Array.isArray(response.data) ? response.data : (response.data?.data || []);
         } catch (error) {
             console.error("Failed to fetch customers:", error);

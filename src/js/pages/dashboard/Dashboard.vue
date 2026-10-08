@@ -108,6 +108,7 @@
 </script>
 
 <template>
+
   <div class="space-y-6">
     <!-- 1. Metric Cards Grid -->
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -121,7 +122,10 @@
           </div>
         </template>
         <template #content>
-          <div class="text-2xl font-bold text-surface-900 dark:text-surface-0">
+          <div v-if="loading" class="text-2xl font-bold text-surface-900 dark:text-surface-0">
+            <i class="pi pi-spin pi-spinner text-4xl text-primary"></i>
+          </div>
+          <div v-show="!loading" class="text-2xl font-bold text-surface-900 dark:text-surface-0">
             {{ metric.count }}
           </div>
         </template>
@@ -129,33 +133,40 @@
     </div>
 
     <!-- 2. Charts Section -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <!-- Line Chart -->
-      <Card class="lg:col-span-2 shadow-sm">
-        <template #title>Order Growth Trend</template>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      
+      <!-- Line Chart Card -->
+      <Card>
+        <template #title>Orders Trend (Last 6 Months)</template>
         <template #content>
-          <div class="h-80">
-            <Chart type="line" :data="lineChartData" :options="lineChartOptions" class="h-full w-full" />
+          <div v-if="loading" class="flex justify-center items-center h-72">
+            <i class="pi pi-spin pi-spinner text-4xl text-primary"></i>
           </div>
+          <Chart v-show="!loading" type="line" :data="lineChartData" :options="lineChartOptions" class="h-72" />
         </template>
       </Card>
 
-      <!-- Pie Chart -->
-      <Card class="shadow-sm">
-        <template #title>Status Breakdown</template>
+      <!-- Pie Chart Card -->
+      <Card>
+        <template #title>Order Status Breakdown</template>
         <template #content>
-          <div class="h-80 flex items-center justify-center">
-            <Chart type="pie" :data="pieChartData" :options="pieChartOptions" class="h-full w-full" />
+          <div v-if="loading" class="flex justify-center items-center h-72">
+            <i class="pi pi-spin pi-spinner text-4xl text-primary"></i>
           </div>
+          <Chart v-show="!loading" type="pie" :data="pieChartData" :options="pieChartOptions" class="h-72" />
         </template>
       </Card>
+
     </div>
 
     <!-- 3. Data Table Section -->
     <Card class="shadow-sm">
       <template #title>Recent Orders</template>
       <template #content>
-        <DataTable 
+        <div v-if="loading" class="flex justify-center items-center h-72">
+          <i class="pi pi-spin pi-spinner text-4xl text-primary"></i>
+        </div>
+        <DataTable v-show="!loading" 
           :value="recordTable"
           tableStyle="min-width: 50rem"
         >

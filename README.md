@@ -30,3 +30,11 @@ Frontend Framework: Vue 3 (Composition API)
 UI Component Library: PrimeVue 4
 
 HTTP Client: Axios
+
+📸 Screenshots
+
+![alt text](https://github.com/No-Spacing/osus-electron/blob/main/screenshots/dashboard.png)
+![alt text](https://github.com/No-Spacing/osus-electron/blob/main/screenshots/company.png)
+![alt text](https://github.com/No-Spacing/osus-electron/blob/main/screenshots/customers.png)
+![alt text](https://github.com/No-Spacing/osus-electron/blob/main/screenshots/records.png)
+![alt text](https://github.com/No-Spacing/osus-electron/blob/main/screenshots/view_records.png)

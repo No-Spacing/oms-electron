@@ -33,8 +33,8 @@ HTTP Client: Axios
 
 📸 Screenshots
 
-![alt text](https://github.com/No-Spacing/osus-electron/blob/main/screenshots/dashboard.jpg)
-![alt text](https://github.com/No-Spacing/osus-electron/blob/main/screenshots/company.jpg)
-![alt text](https://github.com/No-Spacing/osus-electron/blob/main/screenshots/customers.jpg)
-![alt text](https://github.com/No-Spacing/osus-electron/blob/main/screenshots/records.jpg)
-![alt text](https://github.com/No-Spacing/osus-electron/blob/main/screenshots/view_records.jpg)
+![alt text](https://github.com/No-Spacing/osus-electron/blob/main/screenshots/dashboard.png)
+![alt text](https://github.com/No-Spacing/osus-electron/blob/main/screenshots/company.png)
+![alt text](https://github.com/No-Spacing/osus-electron/blob/main/screenshots/customers.png)
+![alt text](https://github.com/No-Spacing/osus-electron/blob/main/screenshots/records.png)
+![alt text](https://github.com/No-Spacing/osus-electron/blob/main/screenshots/view_records.png)

@@ -1,6 +1,6 @@
 <script setup>
-    import { Card, Button, InputText, Message, Select, useToast, InputGroup, InputGroupAddon } from 'primevue';
-    import { Form, FormField } from '@primevue/forms';
+    import { Card, Button, InputText, Message, Select, useToast, InputGroup, InputGroupAddon, ToggleSwitch } from 'primevue';
+    import { Form } from '@primevue/forms';
     import { onMounted, reactive, ref, watch } from 'vue';
     import { useRoute, useRouter } from 'vue-router';
     import SkeletonLoading from '../../../layout/SkeletonLoading.vue';
@@ -24,6 +24,7 @@
         address: null,
         mobile_no: null,
         email: null,
+        status: 1,
     });
 
     const resolver = ({ values }) => {
@@ -61,7 +62,8 @@
                 company_id: response.data?.company?.id,
                 address: response.data.address,
                 mobile_no: response.data.mobile_no,
-                email: response.data.email
+                email: response.data.email,
+                status: response.data.status
             });
         } catch (error) {
             console.error('Failed to fetch customer:', error);
@@ -102,22 +104,22 @@
                     
                     <Form v-slot="$form" class="flex flex-col gap-4 w-full" :initialValues="initialValues" :resolver="resolver"  @submit="onFormSubmit">
                         <InputText type="text" name="id" hidden/>
-                        <FormField name="name" class="flex flex-col gap-1">
+                        <div class="flex flex-col gap-1">
                             <label for="name">Name</label>
                             <InputText type="text" id="name" name="name" placeholder="Name" />
                             <Message v-if="$form.name?.invalid || errors.errors?.name" severity="error" size="small" variant="simple">{{ $form.name.error?.message || errors.errors?.name[0] }}</Message>
-                        </FormField>
+                        </div>
                         
-                        <FormField class="flex flex-col gap-1">
+                        <div class="flex flex-col gap-1">
                             <label for="name">Company</label>
                             <Select name="company_id" :options="companies.data" optionLabel="name" optionValue="id" placeholder="Select a company" />
-                        </FormField>
-                        <FormField class="flex flex-col gap-1">
+                        </div>
+                        <div class="flex flex-col gap-1">
                             <label for="name">Address</label>
                             <InputText name="address" type="text" placeholder="Address" />
                             <Message v-if="$form.address?.invalid || errors.errors?.address" severity="error" size="small" variant="simple">{{ $form.address.error?.message || errors.errors?.address[0] }}</Message>
-                        </FormField>
-                        <FormField class="flex flex-col gap-1">
+                        </div>
+                        <div class="flex flex-col gap-1">
                             <label for="name">Mobile No.</label>
                             <InputGroup>
                                 <InputGroupAddon>
@@ -126,12 +128,18 @@
                                 <InputText id="mobile_no" name="mobile_no" placeholder="9XXXXXXXXX"/>
                             </InputGroup>
                             <Message v-if="$form.mobile_no?.invalid || errors.errors?.mobile_no" severity="error" size="small" variant="simple">{{ $form.mobile_no.error?.message || errors.errors?.mobile_no[0] }}</Message>
-                        </FormField>
-                        <FormField class="flex flex-col gap-1">
+                        </div>
+                        <div class="flex flex-col gap-1">
                             <label for="name">Email</label>
                             <InputText type="text" name="email" placeholder="Email" />
                             <Message v-if="$form.email?.invalid || errors.errors?.email" severity="error" size="small" variant="simple">{{ $form.email.error?.message || errors.errors?.email[0] }}</Message>
-                        </FormField>
+                        </div>
+
+                        <div class="flex flex-col gap-1">
+                            <label for="name">Status</label>
+                            <ToggleSwitch  name="status" :true-value="1" :false-value="0"/>
+                            <Message v-if="$form.email?.invalid || errors.errors?.email" severity="error" size="small" variant="simple">{{ $form.email.error?.message || errors.errors?.email[0] }}</Message>
+                        </div>
 
                         <div class="flex gap-2 justify-center my-5">
                             <Button label="Save" type="submit" class="w-75"/>

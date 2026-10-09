@@ -10,7 +10,6 @@
     const toast = useToast();
     const router = useRouter();
 
-    const customerService = new CustomerService();
     const recordService = new RecordService();
 
     const customers = ref([]);
@@ -30,30 +29,33 @@
         order_amount: 0,
     });
 
-    const search = (event) => {
-        // Safety check: ensure customers.value is actually an array before filtering
-        const safeCustomers = Array.isArray(customers.value) ? customers.value : [];
-
-        if (!event.query.trim()) {
-            items.value = [...safeCustomers];
-        } else {
-            items.value = safeCustomers.filter((customer) => {
-                // Handle if customer is an object or a plain string
-                const customerName = typeof customer === 'object' && customer !== null ? customer.name : customer;
-                
-                return String(customerName || '').toLowerCase().includes(event.query.toLowerCase());
-            });
+    const search = async (event) => {
+        try {
+            // Fetch the data from the API using the search query
+            const response = await recordService.getCustomers({ search: event.query });
+            
+            // Safely extract the array from the response
+            const data = Array.isArray(response.data) ? response.data : (response?.data || []);
+            
+            // Update both state arrays so they stay in sync
+            customers.value = data;
+            items.value = data;
+        } catch (error) {
+            console.error("Failed to fetch customers:", error);
+            customers.value = [];
+            items.value = []; // Fallback to empty array on error
         }
     };
 
-    const fetchCustomer = async () => {
+    const fetchCustomer  = async () => {  
         try {
-            const response = await customerService.getCustomers();  
-            customers.value = Array.isArray(response.data) ? response.data : (response.data?.data || []);
+            const response = await recordService.getCustomers();  
+            customers.value = Array.isArray(response.data) ? response.data : (response?.data || []);
         } catch (error) {
             console.error("Failed to fetch customers:", error);
             customers.value = []; // Fallback to empty array on error
         }
+
     };
 
     const onCustomerSelect = (event) => {

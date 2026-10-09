@@ -6,6 +6,11 @@ export default class RecordService {
         return response.data
     }
 
+    async getCustomers(params) {
+        const response = await apiClient.get('/record/customers', {params});
+        return response.data;
+    }
+
     async saveRecord(params) {
         const response = await apiClient.post('/record/save-record', {
             customer_id: params.customer.id,

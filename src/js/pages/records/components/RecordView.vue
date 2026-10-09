@@ -189,8 +189,8 @@
                                                 <label for="partial" class="ml-3">Partial</label>
                                             </div>
                                             <div class="flex gap-2">
-                                                <Button v-if="!record.pack_partial_at" label="Send" icon="pi pi-send" severity="info" @click="confirm1('pack_partial')"></Button>
-                                                <span v-else>{{ record.pack_partial_send_status.toUpperCase() }} - {{ record.pack_partial_at }}</span>
+                                                <Button v-if="!record.pack_partial_at && !record.pack_completed_at" label="Send" icon="pi pi-send" severity="info" @click="confirm1('pack_partial')"></Button>
+                                                <span v-else>{{ record?.pack_partial_send_status?.toUpperCase() }} - {{ record?.pack_partial_at }}</span>
                                             </div>
                                         </div>
                                         <div class="flex justify-between items-center">
@@ -245,7 +245,7 @@
                                                 <Message v-show="deliveryValid" severity="error" variant="simple" size="small">Please select a courier</Message>
                                             </div>
                                             <div class="flex">
-                                                <Button v-if="record.status != 'delivery'" label="Send" icon="pi pi-send" severity="info" @click="confirm1('delivery')"></Button>
+                                                <Button v-if="!record.delivery_at && !record.customer_pickup_at" label="Send" icon="pi pi-send" severity="info" @click="confirm1('delivery')"></Button>
                                                 <span v-else>{{ record?.delivery_send_status?.toUpperCase() }} - {{ record?.delivery_at }}</span>
                                             </div>
                                         </div>
@@ -279,7 +279,7 @@
                                             <div class="flex gap-2 items-center">
                                                 <span>Customer Pick-up</span>
                                             </div>   
-                                            <Button v-if="record.status != 'delivery'" label="Send" icon="pi pi-send" severity="info" @click="confirm1('customer_pickup')"></Button>
+                                            <Button v-if="!record.delivery_at && !record.customer_pickup_at" label="Send" icon="pi pi-send" severity="info" @click="confirm1('customer_pickup')"></Button>
                                             <span v-else>{{ record?.customer_pickup_send_status?.toUpperCase() }} - {{ record?.customer_pickup_at }}</span>
                                         </div>
                                     </div>

@@ -24,7 +24,7 @@
         address: props?.customerData?.address,
         mobile_no: props?.customerData?.mobile_no,
         email: props?.customerData?.email,
-        status: props?.customerData?.status
+        status: props?.customerData?.status ? props?.customerData?.status : 1
     });
 
     const isVisible = computed({
@@ -61,16 +61,15 @@
     };
 
     const onFormSubmit = ({ valid, values }) => {
-        console.log(values)
-        // if(valid) {
-        //     companyService.saveCustomer(values).then((response) => {
-        //         toast.add({ severity: 'success', summary: 'Confirmed', detail: 'Company has been added!', life: 3000 });
-        //         emit('saved');
-        //         emit('update:dialog', false);
-        //     }).catch((errors) => {
-        //         error.value = errors.response.data
-        //     })
-        // }
+        if(valid) {
+            companyService.saveCustomer(values).then((response) => {
+                toast.add({ severity: 'success', summary: 'Confirmed', detail: 'Company has been added!', life: 3000 });
+                emit('saved');
+                emit('update:dialog', false);
+            }).catch((errors) => {
+                error.value = errors.response.data
+            })
+        }
     }
 </script>
 <template>

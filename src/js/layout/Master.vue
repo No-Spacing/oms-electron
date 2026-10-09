@@ -69,8 +69,8 @@
                         <Menu :model="filteredItems" class="w-full flex flex-col overflow-hidden">
                             <template #start>
                                 <div class="flex items-center justify-center gap-2 px-4 py-6">
-                                    <img src="../../assets/ico.png" alt="Company Logo" class="size-6 object-contain" />
-                                    <span class="block font-semibold">OSUS PMC</span>
+                                    <i class="pi pi-prime text-primary" style="font-size: 2.5rem"></i>
+                                    <span class="block font-semibold">PrimeVue</span>
                                 </div>
                             </template>
                             <template #submenulabel="{ item }">

@@ -1,4 +1,5 @@
 Desktop Order Management System
+
 A modern, high-performance desktop application built with Electron, Vite, Vue 3, and PrimeVue 4, designed to streamline and manage the complete lifecycle of customer orders. It leverages Axios for seamless client-side API communication.
 
 🚀 Features
